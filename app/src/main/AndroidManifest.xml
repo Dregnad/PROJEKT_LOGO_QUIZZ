@@ -15,7 +15,7 @@
         android:theme="@style/Theme.PROJEKT_LOGO_QUIZZ"
         tools:targetApi="31">
         <activity
-            android:name="com.example.projekt_logo_quizz.MainActivity"
+            android:name=".MenuActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,6 +23,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".SettingsActivity"/>
+        <!-- <activity android:name=".MenuActivity"/> -->
+        <activity android:name=".CategoryActivity"/>
+        <activity android:name=".MainActivity" />
+        <activity android:name=".LogoData" />
+
+        <service
+            android:name=".MusicService"
+            android:enabled="true"
+            android:exported="false"/>
+
     </application>
 
 </manifest>
