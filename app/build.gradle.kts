@@ -40,6 +40,8 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
+    implementation("com.squareup.picasso:picasso:2.8")
+    implementation ("com.google.android.flexbox:flexbox:3.0.0")
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(platform("io.github.jan-tennert.supabase:bom:3.1.1"))

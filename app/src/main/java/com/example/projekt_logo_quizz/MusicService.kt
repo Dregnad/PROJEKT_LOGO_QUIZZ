@@ -1,6 +1,7 @@
 package com.example.projekt_logo_quizz
 
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Binder
@@ -22,10 +23,17 @@ class MusicService : Service() {
         if (mediaPlayer == null) {
             mediaPlayer = MediaPlayer.create(this, R.raw.background_music)
             mediaPlayer?.isLooping = true
+
+            // Pobranie zapisanej głośności i ustawienie jej
+            val sharedPreferences = getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+            val savedVolume = sharedPreferences.getFloat("music_volume", 1.0f)
+            mediaPlayer?.setVolume(savedVolume, savedVolume)
+
             mediaPlayer?.start()
         }
         return START_STICKY
     }
+
 
     override fun onDestroy() {
         mediaPlayer?.stop()
