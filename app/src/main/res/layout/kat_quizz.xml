@@ -7,7 +7,7 @@
 
     <!-- Górny pasek -->
     <ImageButton
-        android:id="@+id/btnBack"
+        android:id="@+id/btnBack3"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_alignParentStart="true"
@@ -16,6 +16,18 @@
         android:background="@null"
         android:src="@drawable/poziomy_szczalka"
         android:contentDescription="Powrót" />
+
+
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ustawienia"
+        android:textColor="#000"
+        android:textSize="30sp"
+        android:layout_centerInParent="true" />
+
+
 
     <LinearLayout
         android:id="@+id/topRightLayout"

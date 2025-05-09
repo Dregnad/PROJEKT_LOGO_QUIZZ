@@ -24,7 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
-class LvlActivity : AppCompatActivity() {
+class KatActivity : AppCompatActivity() {
 
     private lateinit var logoImageView: ImageView
     private lateinit var answerContainer: FlexboxLayout
@@ -43,7 +43,10 @@ class LvlActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.lvl_quiz)
+        setContentView(R.layout.kat_quizz)
+
+        sharedPref = getSharedPreferences("GamePrefs", MODE_PRIVATE)
+        hintPoints = sharedPref.getInt("HINT_POINTS", 0)
 
         logoImageView = findViewById(R.id.logoImageView)
         answerContainer = findViewById(R.id.answerContainer)
@@ -51,8 +54,8 @@ class LvlActivity : AppCompatActivity() {
         pointsTextView = findViewById(R.id.pointsTextView)
         findViewById<ImageButton>(R.id.btnNext).setOnClickListener { nextLogo() }
         findViewById<ImageButton>(R.id.btnPrev).setOnClickListener { prevLogo() }
-        findViewById<ImageButton>(R.id.btnBack).setOnClickListener {
-            val intent = Intent(this, CategoryActivity::class.java)
+        findViewById<ImageButton>(R.id.btnBack3).setOnClickListener {
+            val intent = Intent(this, KategorieActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             startActivity(intent)
             finish()
@@ -65,7 +68,7 @@ class LvlActivity : AppCompatActivity() {
         }
 
         findViewById<ImageButton>(R.id.podpowiedz1).setOnClickListener {
-            val level = intent.getIntExtra("LEVEL", -1)
+            val level = intent.getIntExtra("CATEGORY", -1)
             if (isLogoAlreadyGuessed(logosList[currentIndex].id, level)) {
                 Toast.makeText(this, "To logo już zostało odgadnięte!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -79,8 +82,9 @@ class LvlActivity : AppCompatActivity() {
                 Toast.makeText(this, "Brak dostępnych wskazówek!", Toast.LENGTH_SHORT).show()
             }
         }
+
         findViewById<ImageButton>(R.id.podpowiedz2).setOnClickListener {
-            val level = intent.getIntExtra("LEVEL", -1)
+            val level = intent.getIntExtra("CATEGORY", -1)
             if (isLogoAlreadyGuessed(logosList[currentIndex].id, level)) {
                 Toast.makeText(this, "To logo już zostało odgadnięte!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -96,13 +100,14 @@ class LvlActivity : AppCompatActivity() {
         }
 
         findViewById<ImageButton>(R.id.podpowiedz3).setOnClickListener {
-            val level = intent.getIntExtra("LEVEL", -1)
+            val level = intent.getIntExtra("CATEGORY", -1)
             if (isLogoAlreadyGuessed(logosList[currentIndex].id, level)) {
                 Toast.makeText(this, "To logo już zostało odgadnięte!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
             if (hintPoints >= 2) {
-                hintPoints -= 2
+                hintPoints -= 2  // ODEJMUJEMY NA POCZĄTKU
                 sharedPref.edit().putInt("HINT_POINTS", hintPoints).apply()
                 updatePointsDisplay()
 
@@ -115,10 +120,8 @@ class LvlActivity : AppCompatActivity() {
 
         letterButtons = mutableListOf()
         answerSlots = mutableListOf()
-        sharedPref = getSharedPreferences("GamePrefs", MODE_PRIVATE)
-        hintPoints = sharedPref.getInt("HINT_POINTS", 0)
 
-        val level = intent.getIntExtra("LEVEL", -1)
+        val level = intent.getIntExtra("CATEGORY", -1)
         if (level == -1) {
             Toast.makeText(this, "Błąd ładowania poziomu!", Toast.LENGTH_LONG).show()
             finish()
@@ -135,10 +138,11 @@ class LvlActivity : AppCompatActivity() {
     }
 
 
+
     private fun loadLogosForLevel(level: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val response = supabase.from("poziom$level")
+                val response = supabase.from("kategoria$level")
                     .select()
                     .decodeList<Logo>()
 
@@ -163,7 +167,7 @@ class LvlActivity : AppCompatActivity() {
 
 
     private fun findFirstUnsolvedLogo(): Int {
-        val level = intent.getIntExtra("LEVEL", -1)
+        val level = intent.getIntExtra("CATEGORY", -1)
         if (level == -1) return logosList.size
 
         for (i in logosList.indices) {
@@ -177,14 +181,14 @@ class LvlActivity : AppCompatActivity() {
 
     private fun loadQuestion() {
         if (currentIndex >= logosList.size) {
-            markLevelAsCompleted(intent.getIntExtra("LEVEL", 1))
+            markLevelAsCompleted(intent.getIntExtra("CATEGORY", 1))
             goToSummary()
             return
         }
 
         val logo = logosList[currentIndex]
         correctAnswer = logo.name.uppercase()
-        val level = intent.getIntExtra("LEVEL", -1)
+        val level = intent.getIntExtra("CATEGORY", -1)
 
         Picasso.get().load(logo.image).into(logoImageView)
 
@@ -218,7 +222,7 @@ class LvlActivity : AppCompatActivity() {
     }
 
     private fun checkIfLevelCompleted(): Boolean {
-        val level = intent.getIntExtra("LEVEL", -1)
+        val level = intent.getIntExtra("CATEGORY", -1)
         if (level == -1) {
             Toast.makeText(this, "Błąd poziomu!", Toast.LENGTH_SHORT).show()
             return false
@@ -266,7 +270,7 @@ class LvlActivity : AppCompatActivity() {
             if (userAnswer.equals(correctAnswer, ignoreCase = true)) {
                 Toast.makeText(this, "Brawo! Dobra odpowiedź!", Toast.LENGTH_SHORT).show()
 
-                val level = intent.getIntExtra("LEVEL", -1)
+                val level = intent.getIntExtra("CATEGORY", -1)
                 if (level == -1) {
                     Toast.makeText(this, "Błąd poziomu!", Toast.LENGTH_SHORT).show()
                     return
@@ -309,6 +313,7 @@ class LvlActivity : AppCompatActivity() {
     }
 
     private fun updatePointsDisplay() {
+        sharedPref.edit().putBoolean("SHOWING_HINTS", showingHints).apply()
         if (showingHints) {
             findViewById<ImageButton>(R.id.buttonArrow).setImageResource(R.drawable.wskazowka_ico)
             pointsTextView.text = "$hintPoints x "
@@ -347,7 +352,7 @@ class LvlActivity : AppCompatActivity() {
     }
 
     private fun skipCurrentLogo() {
-        val level = intent.getIntExtra("LEVEL", -1)
+        val level = intent.getIntExtra("CATEGORY", -1)
         if (level == -1) return
 
         val logo = logosList[currentIndex]
@@ -378,7 +383,7 @@ class LvlActivity : AppCompatActivity() {
                 text = "_"
                 textSize = 24f
                 setTextColor(Color.WHITE)
-                background = ContextCompat.getDrawable(this@LvlActivity, R.drawable.kafelek_zga)
+                background = ContextCompat.getDrawable(this@KatActivity, R.drawable.kafelek_zga)
                 gravity = Gravity.CENTER
                 layoutParams = FlexboxLayout.LayoutParams(tileSize, tileSize).apply {
                     setMargins(marginSize, marginSize, marginSize, marginSize)
@@ -398,7 +403,7 @@ class LvlActivity : AppCompatActivity() {
             val button = Button(this).apply {
                 text = letter.toString()
                 setTextColor(Color.BLACK)
-                background = ContextCompat.getDrawable(this@LvlActivity, R.drawable.kafelek)
+                background = ContextCompat.getDrawable(this@KatActivity, R.drawable.kafelek)
                 layoutParams = FlexboxLayout.LayoutParams(tileSize, tileSize).apply {
                     setMargins(marginSize, marginSize, marginSize, marginSize)
                 }
@@ -430,11 +435,11 @@ class LvlActivity : AppCompatActivity() {
 
     private fun saveTotalPoints(points: Int) {
         val totalPoints = sharedPref.getInt("TOTAL_POINTS", 0)
-        val mode1Points = sharedPref.getInt("MODE1_POINTS", 0)
+        val mode2Points = sharedPref.getInt("MODE2_POINTS", 0)
 
         sharedPref.edit()
             .putInt("TOTAL_POINTS", totalPoints + points)
-            .putInt("MODE1_POINTS", mode1Points + points)
+            .putInt("MODE2_POINTS", mode2Points + points)
             .apply()
 
         val addedHints = points / 1
@@ -444,9 +449,9 @@ class LvlActivity : AppCompatActivity() {
         }
 
 
-        val level = intent.getIntExtra("LEVEL", -1)
+        val level = intent.getIntExtra("CATEGORY", -1)
         if (level != -1) {
-            val levelPointsKey = "POINTS_LVL$level"
+            val levelPointsKey = "POINTS_KAT$level"
             val levelPoints = sharedPref.getInt(levelPointsKey, 0) + points
             sharedPref.edit().putInt(levelPointsKey, levelPoints).apply()
         }
@@ -457,14 +462,14 @@ class LvlActivity : AppCompatActivity() {
 
 
     private fun markLogoAsGuessed(logoId: Int, level: Int) {
-        val guessedLogos = sharedPref.getStringSet("GUESSED_LOGOS_LVL$level", mutableSetOf()) ?: mutableSetOf()
+        val guessedLogos = sharedPref.getStringSet("GUESSED_LOGOS_KAT$level", mutableSetOf()) ?: mutableSetOf()
         guessedLogos.add(logoId.toString())
-        sharedPref.edit().putStringSet("GUESSED_LOGOS_LVL$level", guessedLogos).apply()
+        sharedPref.edit().putStringSet("GUESSED_LOGOS_KAT$level", guessedLogos).apply()
     }
 
 
     private fun isLogoAlreadyGuessed(logoId: Int, level: Int): Boolean {
-        val guessedLogos = sharedPref.getStringSet("GUESSED_LOGOS_LVL$level", mutableSetOf()) ?: mutableSetOf()
+        val guessedLogos = sharedPref.getStringSet("GUESSED_LOGOS_KAT$level", mutableSetOf()) ?: mutableSetOf()
         return guessedLogos.contains(logoId.toString())
     }
 
@@ -482,13 +487,14 @@ class LvlActivity : AppCompatActivity() {
     }
 
     private fun goToSummary() {
+        intent.putExtra("CATEGORY", intent.getIntExtra("CATEGORY", -1))
         startActivity(Intent(this, SummaryActivity::class.java))
         finish()
     }
 }
 
 @Serializable
-data class Logo(
+data class Kategoria(
     val id: Int,
     val name: String,
     val image: String,

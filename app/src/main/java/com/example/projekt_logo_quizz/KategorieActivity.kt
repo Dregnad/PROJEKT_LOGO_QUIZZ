@@ -11,30 +11,31 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
-class CategoryActivity : AppCompatActivity() {
+class KategorieActivity : AppCompatActivity() {
     private lateinit var sharedPref: SharedPreferences
     private lateinit var pointsTextView: TextView
     private var showingHints: Boolean = false
 
-    private val levelRequirements = mapOf(
+    private val categoryRequirements = mapOf(
         1 to 0,
-        2 to 2,
-        3 to 4,
-        4 to 6,
-        5 to 8,
-        6 to 10,
-        7 to 12,
-        8 to 14,
-        9 to 16,
-        10 to 18
+        2 to 4,
+        3 to 8,
+        4 to 12,
+        5 to 16,
+        6 to 20,
+        7 to 24,
+        8 to 28,
+        9 to 32,
+        10 to 36
     )
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_category)
+        setContentView(R.layout.activity_kategorie)
 
         sharedPref = getSharedPreferences("GamePrefs", MODE_PRIVATE)
+
         pointsTextView = findViewById(R.id.pointsTextView)
         updatePointsDisplay()
 
@@ -44,23 +45,24 @@ class CategoryActivity : AppCompatActivity() {
             updatePointsDisplay()
         }
 
-        val mode1Points = sharedPref.getInt("MODE1_POINTS", 0)
+        val mode2Points = sharedPref.getInt("MODE2_POINTS", 0)
 
-        for (level in 1..10) {
-            val levelLayoutId = resources.getIdentifier("level$level", "id", packageName)
-            val levelLayout = findViewById<RelativeLayout>(levelLayoutId)
+        for (category in 1..10) {
+            val categoryLayoutId = resources.getIdentifier("kat$category", "id", packageName)
+            val categoryLayout = findViewById<RelativeLayout>(categoryLayoutId)
 
-            val lockLayerId = resources.getIdentifier("lockLayer$level", "id", packageName)
+            val lockLayerId = resources.getIdentifier("kat_lockLayer$category", "id", packageName)
             val lockLayer = findViewById<RelativeLayout>(lockLayerId)
 
-            val lockDescId = resources.getIdentifier("lockDesc$level", "id", packageName)
+            val lockDescId = resources.getIdentifier("kat_lockDesc$category", "id", packageName)
             val lockDesc = findViewById<TextView>(lockDescId)
 
-            val completedLogosCount = sharedPref.getStringSet("GUESSED_LOGOS_LVL$level", mutableSetOf())?.size ?: 0
-            val points = sharedPref.getInt("POINTS_LVL$level", 0)
 
-            val pointsViewId = resources.getIdentifier("poziom${level}Punkty", "id", packageName)
-            val logosViewId = resources.getIdentifier("poziom${level}Loga", "id", packageName)
+            val completedLogosCount = sharedPref.getStringSet("GUESSED_LOGOS_KAT$category", mutableSetOf())?.size ?: 0
+            val points = sharedPref.getInt("POINTS_KAT$category", 0)
+
+            val pointsViewId = resources.getIdentifier("kat${category}Punkty", "id", packageName)
+            val logosViewId = resources.getIdentifier("kat${category}Loga", "id", packageName)
 
             val pointsTextView = findViewById<TextView>(pointsViewId)
             val logosTextView = findViewById<TextView>(logosViewId)
@@ -68,22 +70,22 @@ class CategoryActivity : AppCompatActivity() {
             pointsTextView?.text = "Punkty: $points"
             logosTextView?.text = "Loga: $completedLogosCount/20"
 
-            val requiredPoints = levelRequirements[level] ?: 0
-            val remainingPoints = requiredPoints - mode1Points
+            val requiredPoints = categoryRequirements[category] ?: 0
+            val remainingPoints = requiredPoints - mode2Points
 
-            if (mode1Points  >= requiredPoints) {
+            if (mode2Points >= requiredPoints) {
                 lockLayer?.visibility = View.GONE
-                levelLayout?.visibility = View.VISIBLE
-                levelLayout?.isEnabled = true
-                levelLayout?.setOnClickListener {
-                    openQuizActivity(level)
+                categoryLayout?.visibility = View.VISIBLE
+                categoryLayout?.isEnabled = true
+                categoryLayout?.setOnClickListener {
+                    openQuizActivity(category)
                 }
             } else {
                 lockLayer?.visibility = View.VISIBLE
                 lockDesc?.text = "Uzyskaj jeszcze $remainingPoints punktów, aby odblokować."
-                levelLayout?.visibility = View.GONE
-                levelLayout?.isEnabled = false
-                levelLayout?.setOnClickListener {
+                categoryLayout?.visibility = View.GONE
+                categoryLayout?.isEnabled = false
+                categoryLayout?.setOnClickListener {
                     Toast.makeText(this, "Zdobądź $requiredPoints pkt, aby odblokować ten poziom!", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -97,11 +99,13 @@ class CategoryActivity : AppCompatActivity() {
         }
     }
 
-    private fun openQuizActivity(level: Int) {
-        val intent = Intent(this, LvlActivity::class.java)
-        intent.putExtra("LEVEL", level)
+    private fun openQuizActivity(category: Int) {
+        val intent = Intent(this, KatActivity::class.java)
+        intent.putExtra("CATEGORY", category)
         startActivity(intent)
     }
+
+
 
     private fun updatePointsDisplay() {
         val totalPoints = sharedPref.getInt("TOTAL_POINTS", 0)

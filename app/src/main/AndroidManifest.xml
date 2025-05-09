@@ -19,7 +19,7 @@
 
 
         <activity
-            android:name=".MenuActivity"
+            android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,8 +29,11 @@
         </activity>
 
         <activity android:name=".SettingsActivity"/>
+        <activity android:name=".MenuActivity"/>
         <!-- <activity android:name=".MenuActivity"/> -->
         <activity android:name=".CategoryActivity"/>
+        <activity android:name=".KategorieActivity"/>
+        <activity android:name=".KatActivity"/>
         <activity android:name=".MainActivity" />
         <activity android:name=".ResultActivity" />
         <activity android:name=".LvlActivity" />

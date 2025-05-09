@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <!-- Obrazek zamiast tytułu -->
 
     <ImageView
         android:id="@+id/background"
@@ -27,6 +26,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    
 
     <Button
         android:id="@+id/categoryButton"
@@ -40,6 +40,8 @@
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/settingsImage" />
+
+
 
     <Button
         android:id="@+id/button_categories"
@@ -67,15 +69,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_categories" />
 
-    <!-- Obrazek na dole -->
-
-    <!-- Przycisk Ustawienia - przesunięty do lewej -->
-    <!-- Przycisk Ustawienia - po lewej -->
-    <!-- Przycisk Ustawienia - po lewej -->
-
-    <!-- Przycisk Statystyki - na środku -->
-
-    <!-- Przycisk Osiągnięcia - po prawej -->
 
     <ImageView
         android:id="@+id/settingsButton"
