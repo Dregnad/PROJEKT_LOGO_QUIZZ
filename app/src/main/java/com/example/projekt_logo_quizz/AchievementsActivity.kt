@@ -1,8 +1,14 @@
 package com.example.projekt_logo_quizz
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.content.SharedPreferences
 import android.graphics.Color
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.IBinder
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -14,11 +20,31 @@ import android.widget.Toast
 class AchievementsActivity : AppCompatActivity() {
     private lateinit var sharedPref: SharedPreferences
     private lateinit var pointsTextView: TextView
+
     private var showingHints: Boolean = false
+
+    private var musicService: MusicService? = null
+    private var isBound = false
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as MusicService.MusicBinder
+            musicService = binder.getService()
+            isBound = true
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            isBound = false
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_achievements)
+        // Połączenie z MusicService
+        Intent(this, MusicService::class.java).also { intent ->
+            bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+        }
 
         sharedPref = getSharedPreferences("GamePrefs", MODE_PRIVATE)
 
@@ -27,15 +53,30 @@ class AchievementsActivity : AppCompatActivity() {
         updatePointsDisplay()
 
         findViewById<ImageButton>(R.id.buttonArrow).setOnClickListener {
+            musicService?.playClickSound()
             showingHints = !showingHints
             sharedPref.edit().putBoolean("SHOWING_HINTS", showingHints).apply()
             updatePointsDisplay()
         }
 
         val achievementsList = listOf(
-            Triple("Początek przygody", "Odgadnij 3 logotypy", "ACHIEVEMENT_3_LOGOS"),
-            Triple("Ekspert pierwszego poziomu", "Ukończ pierwszy poziom", "ACHIEVEMENT_LVL1")
+
+
+
+            // Odgadywanie logotypów
+            Triple("Początek przygody", "Odgadnij 5 logotypy", "ACHIEVEMENT_5_LOGOS"),
+            Triple("Entuzjasta logotypów", "Odgadnij 40 logotypów", "ACHIEVEMENT_40_LOGOS"),
+            Triple("Mistrz logotypów", "Odgadnij 80 logotypów", "ACHIEVEMENT_80_LOGOS"),
+            Triple("Ekspert", "Odgadnij 200 logotypów", "ACHIEVEMENT_200_LOGOS"),
+
+            // Ukończenie poziomów
+            Triple("Ekspert pierwszego poziomu", "Ukończ pierwszy poziom", "ACHIEVEMENT_LVL1"),
+            Triple("Połowa drogi", "Ukończ 5 poziomów", "ACHIEVEMENT_5_LEVELS"),
+            Triple("Ekspert poziomów", "Ukończ 7 poziomów", "ACHIEVEMENT_7_LEVELS"),
+            Triple("Niepowstrzymany", "Ukończ 10 poziom", "ACHIEVEMENT_10_LEVELS")
+
         )
+
 
         val layout = findViewById<LinearLayout>(R.id.achievementsContainer)
 
@@ -67,7 +108,7 @@ class AchievementsActivity : AppCompatActivity() {
                 val textView = TextView(this@AchievementsActivity).apply {
                     text = "$title\n$description"
                     textSize = 18f
-                    setTextColor(if (sharedPref.getBoolean(key, false)) Color.WHITE else Color.GRAY)
+                    setTextColor(if (sharedPref.getBoolean(key, false)) Color.WHITE else Color.BLACK)
                     layoutParams = RelativeLayout.LayoutParams(
                         RelativeLayout.LayoutParams.MATCH_PARENT,
                         RelativeLayout.LayoutParams.WRAP_CONTENT
@@ -87,7 +128,16 @@ class AchievementsActivity : AppCompatActivity() {
 
         val btnBackMenu = findViewById<ImageButton>(R.id.btnBackMenu)
         btnBackMenu.setOnClickListener {
+            musicService?.playClickSound()
             onBackPressed()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (isBound) {
+            unbindService(serviceConnection)
+            isBound = false
         }
     }
 

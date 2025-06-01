@@ -1,36 +1,56 @@
 package com.example.projekt_logo_quizz
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.SharedPreferences
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
 class SummaryActivity : AppCompatActivity() {
+    private lateinit var clickSound: MediaPlayer
 
-    private lateinit var totalPointsTextView: TextView
-    private lateinit var backButton: Button
-    private lateinit var sharedPref: SharedPreferences
-
-    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.summary_activity)
 
-        totalPointsTextView = findViewById(R.id.summaryTextView)
-        backButton = findViewById(R.id.backButton)
+        clickSound = MediaPlayer.create(this, R.raw.click_literki)
 
-        sharedPref = getSharedPreferences("GamePrefs", MODE_PRIVATE)
+        val completedLevel = intent.getIntExtra("COMPLETED_LEVEL", -1)
+        val completedCategory = intent.getIntExtra("COMPLETED_CATEGORY", -1)
+        val totalLevels = 5 // Zmień na rzeczywistą liczbę poziomów/kategorii
 
-        val totalPoints = sharedPref.getInt("TOTAL_POINTS", 0)
-        totalPointsTextView.text = "Łączna liczba punktów: $totalPoints"
+        if (completedLevel >= totalLevels || completedCategory >= totalLevels) {
+            findViewById<Button>(R.id.btnNextLevel).visibility = View.GONE
+        }
 
-        backButton.setOnClickListener {
-            val intent = Intent(this, CategoryActivity::class.java)
+        findViewById<Button>(R.id.btnBackToMenu).setOnClickListener {
+            clickSound.start()
+            val intent = Intent(this, CategoryActivity::class.java) // lub KategorieActivity
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             startActivity(intent)
             finish()
         }
+
+        findViewById<Button>(R.id.btnNextLevel).setOnClickListener {
+            clickSound.start()
+            if (completedLevel != -1) {
+                val nextLevel = completedLevel + 1
+                val intent = Intent(this, LvlActivity::class.java)
+                intent.putExtra("LEVEL", nextLevel)
+                startActivity(intent)
+            } else if (completedCategory != -1) {
+                val nextCategory = completedCategory + 1
+                val intent = Intent(this, KatActivity::class.java)
+                intent.putExtra("CATEGORY", nextCategory)
+                startActivity(intent)
+            }
+            finish()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        clickSound.release()
     }
 }

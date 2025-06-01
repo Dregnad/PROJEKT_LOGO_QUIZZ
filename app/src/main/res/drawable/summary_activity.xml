@@ -1,0 +1,28 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/lvl_tlo">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Poziom ukończony"
+        android:textSize="24sp"
+        android:textColor="#FFFFFF" />
+
+    <Button
+        android:id="@+id/btnBackToMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Powrót do menu"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/btnNextLevel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Następny poziom"
+        android:layout_marginTop="16dp" />
+</LinearLayout>

@@ -17,6 +17,17 @@
         android:src="@drawable/poziomy_szczalka"
         android:contentDescription="Powrót" />
 
+    <TextView
+        android:id="@+id/hintP2"
+        android:background="#80000000"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:visibility="gone"
+        android:layout_width="200dp"
+        android:layout_height="200dp" />
+
+
+
     <LinearLayout
         android:id="@+id/topRightLayout"
         android:layout_width="wrap_content"
@@ -35,11 +46,15 @@
 
 
 
+
     <RelativeLayout
+        android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="100dp">
+
+
 
         <ImageView
             android:id="@+id/logoImageView"
@@ -62,19 +77,19 @@
                 android:id="@+id/podpowiedz1"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:layout_marginBottom="10dp"
                 android:background="@null"
                 android:scaleType="fitCenter"
-                android:src="@drawable/plus"
-                android:layout_marginBottom="10dp"/>
+                android:src="@drawable/plus" />
 
             <ImageButton
                 android:id="@+id/podpowiedz2"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:layout_marginBottom="10dp"
                 android:background="@null"
                 android:scaleType="fitCenter"
-                android:src="@drawable/usun_litere"
-                android:layout_marginBottom="10dp"/>
+                android:src="@drawable/usun_litere" />
 
             <ImageButton
                 android:id="@+id/podpowiedz3"
@@ -94,23 +109,24 @@
             android:paddingStart="0dp"
             android:paddingEnd="0dp">
 
+
             <ImageButton
                 android:id="@+id/podpowiedz4"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:layout_marginBottom="10dp"
                 android:background="@null"
                 android:scaleType="fitCenter"
-                android:src="@drawable/wiki_p"
-                android:layout_marginBottom="10dp"/>
+                android:src="@drawable/wiki_p" />
 
             <ImageButton
                 android:id="@+id/podpowiedz5"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:layout_marginBottom="10dp"
                 android:background="@null"
                 android:scaleType="fitCenter"
-                android:src="@drawable/wik_pp"
-                android:layout_marginBottom="10dp"/>
+                android:src="@drawable/wik_pp" />
 
             <ImageButton
                 android:id="@+id/podpowiedz6"
@@ -120,16 +136,15 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/a_z" />
         </LinearLayout>
+
     </RelativeLayout>
 
-    <!-- Sekcja odpowiedzi -->
-    <!-- Nowy układ kontenerów -->
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="320dp">
 
-        <!-- Kontener na odpowiedzi -->
         <com.google.android.flexbox.FlexboxLayout
             android:id="@+id/answerContainer"
             android:layout_width="wrap_content"
@@ -141,7 +156,7 @@
             app:justifyContent="center"
             android:maxWidth="320dp" />
 
-        <!-- Kontener na litery -->
+
         <com.google.android.flexbox.FlexboxLayout
             android:id="@+id/lettersContainer"
             android:layout_width="wrap_content"
@@ -156,7 +171,6 @@
     </RelativeLayout>
 
 
-    <!-- Strzałki na dole -->
     <ImageButton
         android:id="@+id/btnPrev"
         android:layout_width="50dp"
@@ -180,5 +194,18 @@
         android:background="@null"
         android:src="@drawable/szczalka_prawo"
         android:contentDescription="Następny" />
+
+    <TextView
+        android:id="@+id/hintP1"
+        android:layout_width="230dp"
+        android:layout_height="82dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:visibility="gone"
+        android:layout_marginEnd="90dp"
+        android:background="#FF009000"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp" />
 
 </RelativeLayout>

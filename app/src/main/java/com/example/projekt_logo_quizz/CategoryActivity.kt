@@ -1,9 +1,13 @@
 package com.example.projekt_logo_quizz
 
 import android.annotation.SuppressLint
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.IBinder
 import android.view.View
 import android.widget.ImageButton
 import android.widget.RelativeLayout
@@ -15,6 +19,20 @@ class CategoryActivity : AppCompatActivity() {
     private lateinit var sharedPref: SharedPreferences
     private lateinit var pointsTextView: TextView
     private var showingHints: Boolean = false
+    private var musicService: MusicService? = null
+    private var isBound = false
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as MusicService.MusicBinder
+            musicService = binder.getService()
+            isBound = true
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            isBound = false
+        }
+    }
 
     private val levelRequirements = mapOf(
         1 to 0,
@@ -34,11 +52,16 @@ class CategoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_category)
 
+        Intent(this, MusicService::class.java).also { intent ->
+            bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+        }
+
         sharedPref = getSharedPreferences("GamePrefs", MODE_PRIVATE)
         pointsTextView = findViewById(R.id.pointsTextView)
         updatePointsDisplay()
 
         findViewById<ImageButton>(R.id.buttonArrow).setOnClickListener {
+            musicService?.playClickSound()
             showingHints = !showingHints
             sharedPref.edit().putBoolean("SHOWING_HINTS", showingHints).apply()
             updatePointsDisplay()
@@ -76,6 +99,7 @@ class CategoryActivity : AppCompatActivity() {
                 levelLayout?.visibility = View.VISIBLE
                 levelLayout?.isEnabled = true
                 levelLayout?.setOnClickListener {
+                    musicService?.playClickSound()
                     openQuizActivity(level)
                 }
             } else {
@@ -90,6 +114,7 @@ class CategoryActivity : AppCompatActivity() {
         }
 
         findViewById<ImageButton>(R.id.btnBack1).setOnClickListener {
+            musicService?.playClickSound()
             val intent = Intent(this, MenuActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             startActivity(intent)
