@@ -1,0 +1,20 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Wewnętrzne tło -->
+    <solid android:color="#3F51B5" /> <!-- PEŁNY kolor, bez przezroczystości -->
+
+    <!-- Obramowanie -->
+    <stroke
+        android:width="2dp"
+        android:color="#000000" /> <!-- Czarna ramka -->
+
+    <!-- Zaokrąglenie rogów -->
+    <corners android:radius="20dp" />
+
+    <padding
+        android:left="10dp"
+        android:top="10dp"
+        android:right="10dp"
+        android:bottom="10dp" />
+</shape>

@@ -35,16 +35,16 @@ class CategoryActivity : AppCompatActivity() {
     }
 
     private val levelRequirements = mapOf(
-        1 to 0,
-        2 to 2,
-        3 to 4,
-        4 to 6,
-        5 to 8,
-        6 to 10,
-        7 to 12,
-        8 to 14,
-        9 to 16,
-        10 to 18
+        1 to 10,
+        2 to 20,
+        3 to 30,
+        4 to 40,
+        5 to 50,
+        6 to 70,
+        7 to 80,
+        8 to 90,
+        9 to 100,
+        10 to 130
     )
 
     @SuppressLint("MissingInflatedId")

@@ -1,39 +1,69 @@
 package com.example.projekt_logo_quizz
 
+import android.content.ComponentName
 import android.content.Intent
-import android.media.MediaPlayer
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.view.View
-import android.widget.Button
+import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 
 class SummaryActivity : AppCompatActivity() {
-    private lateinit var clickSound: MediaPlayer
+    private var musicService: MusicService? = null
+    private var isBound = false
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as MusicService.MusicBinder
+            musicService = binder.getService()
+            isBound = true
+
+            // Połączono z serwisem – odtwórz dźwięk zwycięstwa
+            musicService?.playVictorySound()
+
+            // Jeśli to 10 poziom – odtwórz specjalny dźwięk
+            val completedLevel = intent.getIntExtra("COMPLETED_LEVEL", -1)
+            val completedCategory = intent.getIntExtra("COMPLETED_CATEGORY", -1)
+            val totalLevels = 10
+            if (completedLevel == totalLevels || completedCategory == totalLevels) {
+                musicService?.playLvl10Sound()
+            }
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            isBound = false
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.summary_activity)
 
-        clickSound = MediaPlayer.create(this, R.raw.click_literki)
+        // Połączenie z MusicService
+        val serviceIntent = Intent(this, MusicService::class.java)
+        bindService(serviceIntent, serviceConnection, BIND_AUTO_CREATE)
 
         val completedLevel = intent.getIntExtra("COMPLETED_LEVEL", -1)
         val completedCategory = intent.getIntExtra("COMPLETED_CATEGORY", -1)
-        val totalLevels = 5 // Zmień na rzeczywistą liczbę poziomów/kategorii
+        val totalLevels = 10
 
         if (completedLevel >= totalLevels || completedCategory >= totalLevels) {
-            findViewById<Button>(R.id.btnNextLevel).visibility = View.GONE
+            findViewById<ImageButton>(R.id.btnNextLevel).visibility = View.GONE
         }
 
-        findViewById<Button>(R.id.btnBackToMenu).setOnClickListener {
-            clickSound.start()
-            val intent = Intent(this, CategoryActivity::class.java) // lub KategorieActivity
+        findViewById<ImageButton>(R.id.btnBackToMenu).setOnClickListener {
+            musicService?.playClickSound()
+            musicService?.stopLvl10Sound()
+            val intent = Intent(this, CategoryActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             startActivity(intent)
             finish()
         }
 
-        findViewById<Button>(R.id.btnNextLevel).setOnClickListener {
-            clickSound.start()
+        findViewById<ImageButton>(R.id.btnNextLevel).setOnClickListener {
+            musicService?.playNextLvlSound()
+
             if (completedLevel != -1) {
                 val nextLevel = completedLevel + 1
                 val intent = Intent(this, LvlActivity::class.java)
@@ -45,12 +75,16 @@ class SummaryActivity : AppCompatActivity() {
                 intent.putExtra("CATEGORY", nextCategory)
                 startActivity(intent)
             }
-            finish()
+
+            musicService?.stopLvl10Sound()
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        clickSound.release()
+        if (isBound) {
+            unbindService(serviceConnection)
+            isBound = false
+        }
     }
 }

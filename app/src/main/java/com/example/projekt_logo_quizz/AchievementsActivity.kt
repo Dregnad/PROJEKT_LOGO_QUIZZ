@@ -71,9 +71,9 @@ class AchievementsActivity : AppCompatActivity() {
 
             // Ukończenie poziomów
             Triple("Ekspert pierwszego poziomu", "Ukończ pierwszy poziom", "ACHIEVEMENT_LVL1"),
-            Triple("Połowa drogi", "Ukończ 5 poziomów", "ACHIEVEMENT_5_LEVELS"),
-            Triple("Ekspert poziomów", "Ukończ 7 poziomów", "ACHIEVEMENT_7_LEVELS"),
-            Triple("Niepowstrzymany", "Ukończ 10 poziom", "ACHIEVEMENT_10_LEVELS")
+            Triple("Połowa drogi", "Ukończ 5 poziomów", "ACHIEVEMENT_LVL5"),
+            Triple("Ekspert poziomów", "Ukończ 7 poziomów", "ACHIEVEMENT_LVL7"),
+            Triple("Niepowstrzymany", "Ukończ 10 poziom", "ACHIEVEMENT_LVL10")
 
         )
 

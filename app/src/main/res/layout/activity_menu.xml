@@ -1,133 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:background="@drawable/menu_tlo"
+    android:padding="0dp">
 
 
-    <ImageView
-        android:id="@+id/background"
+
+    <RelativeLayout
+        android:id="@+id/topBar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/menu_tlo"
-        tools:layout_editor_absoluteX="-44dp"
-        tools:layout_editor_absoluteY="0dp" />
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:padding="0dp">
+
+        <ImageView
+            android:id="@+id/musicToggleButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginLeft="350dp"
+            android:src="@drawable/volume_sound" />
+
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/Section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topBar"
+        android:orientation="vertical"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Logo Quiz"
+            android:textSize="70sp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="0dp"
+            android:textColor="#000" />
+
+
+        <Button
+            android:id="@+id/categoryButton"
+            android:layout_width="250dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/graj_tlo"
+            android:text="Graj"
+            android:textSize="18sp" />
+
+
+        <Button
+            android:id="@+id/button_categories"
+            android:layout_width="250dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/graj_tlo"
+            android:text="Kategorie"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/button_exit"
+            android:layout_width="250dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/graj_tlo"
+            android:text="Wyjdź"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="450dp">
+
+
+        <ImageView
+            android:id="@+id/settingsButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="100dp"
+            android:src="@drawable/ustawienia" />
+
+        <ImageView
+            android:id="@+id/btnStatistics"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="260dp"
+            android:src="@drawable/statystyki" />
+
+        <ImageView
+            android:id="@+id/btnAchievements"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="180dp"
+            android:src="@drawable/osiagnecia" />
+
+    </RelativeLayout>
 
     <ImageView
-        android:id="@+id/settingsImage"
-        android:layout_width="283dp"
-        android:layout_height="105dp"
-        android:layout_marginTop="52dp"
-        android:src="@drawable/ustawienia_1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-    
-
-    <Button
-        android:id="@+id/categoryButton"
-        android:layout_width="250dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="56dp"
-        android:background="@drawable/graj_tlo"
-        android:text="Graj"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/settingsImage" />
-
-
-
-    <Button
-        android:id="@+id/button_categories"
-        android:layout_width="250dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/graj_tlo"
-        android:text="Kategorie"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/categoryButton" />
-
-    <Button
-        android:id="@+id/button_exit"
-        android:layout_width="250dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/graj_tlo"
-        android:text="Wyjdź"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_categories" />
-
-
-    <ImageView
-        android:id="@+id/settingsButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginStart="40dp"
-        android:src="@drawable/ustawienia"
-        app:layout_constraintEnd_toStartOf="@id/btnStatistics"
-        app:layout_constraintHorizontal_bias="0.2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/button_exit" />
-
-    <ImageView
-        android:id="@+id/btnStatistics"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="12dp"
-        android:src="@drawable/statystyki"
-        app:layout_constraintEnd_toStartOf="@id/btnAchievements"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@id/settingsButton"
-        app:layout_constraintTop_toBottomOf="@id/button_exit" />
-
-
-    <ImageView
-        android:id="@+id/btnAchievements"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="40dp"
-        android:src="@drawable/osiagnecia"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.8"
-        app:layout_constraintStart_toEndOf="@id/btnStatistics"
-        app:layout_constraintTop_toBottomOf="@id/button_exit" />
-
-    <ImageView
-        android:id="@+id/musicToggleButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="1dp"
-        android:src="@drawable/volume_sound"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-
-    <ImageView
-        android:id="@+id/menuLogo"
-        android:layout_width="411dp"
-        android:layout_height="280dp"
-        android:layout_marginTop="-40dp"
+        android:id="@+id/bottomImage"
+        android:layout_width="match_parent"
+        android:layout_height="125dp"
+        android:layout_alignParentBottom="true"
         android:scaleType="fitCenter"
-        android:src="@drawable/menu_loga"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnAchievements" />
+        android:src="@drawable/menu_loga" />
 
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

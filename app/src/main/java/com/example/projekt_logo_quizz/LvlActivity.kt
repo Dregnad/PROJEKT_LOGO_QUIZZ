@@ -55,8 +55,8 @@ class LvlActivity : AppCompatActivity() {
     private lateinit var hintP2TextView: TextView
     private lateinit var letterButtons: MutableList<Button>
 
-    private lateinit var correctSound: MediaPlayer
-    private lateinit var wrongSound: MediaPlayer
+
+
     private lateinit var answerSlots: MutableList<TextView>
     private lateinit var pointsTextView: TextView
     private var correctAnswer: String = ""
@@ -64,6 +64,7 @@ class LvlActivity : AppCompatActivity() {
     private var logosList: List<Logo> = listOf()
     private var showingHints = false
     private var hintPoints = 0
+    private lateinit var hintRevealedSlots: MutableList<Boolean>
     private lateinit var sharedPref: SharedPreferences
 
     @SuppressLint("MissingInflatedId")
@@ -84,8 +85,8 @@ class LvlActivity : AppCompatActivity() {
         hintP1TextView = findViewById(R.id.hintP1)
         hintP2TextView = findViewById(R.id.hintP2)
 
-        correctSound = MediaPlayer.create(this, R.raw.odgadniencie_loga)
-        wrongSound = MediaPlayer.create(this, R.raw.zle_logo)
+
+
         findViewById<ImageButton>(R.id.btnNext).setOnClickListener {
             musicService?.playClickSound()
             nextLogo()
@@ -114,9 +115,9 @@ class LvlActivity : AppCompatActivity() {
                 Toast.makeText(this, "To logo już zostało odgadnięte!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            if (hintPoints > 0) {
+            if (hintPoints >= 2) {
                 revealRandomLetter()
-                hintPoints--
+                hintPoints -= 2
                 sharedPref.edit().putInt("HINT_POINTS", hintPoints).apply()
                 val usedHints = sharedPref.getInt("USED_HINTS", 0)
                 sharedPref.edit().putInt("USED_HINTS", usedHints + 1).apply()
@@ -134,12 +135,20 @@ class LvlActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             if (hintPoints > 0) {
-                removeOneWrongLetter()
-                hintPoints--
-                sharedPref.edit().putInt("HINT_POINTS", hintPoints).apply()
-                val usedHints = sharedPref.getInt("USED_HINTS", 0)
-                sharedPref.edit().putInt("USED_HINTS", usedHints + 1).apply() // Zwiększ licznik
-                updatePointsDisplay()
+                val correctLetters = correctAnswer.toSet()
+                val wrongButtons = letterButtons.filter {
+                    it.visibility == View.VISIBLE && it.text[0] !in correctLetters
+                }
+                if (wrongButtons.isNotEmpty()) {
+                    removeOneWrongLetter()
+                    hintPoints--
+                    sharedPref.edit().putInt("HINT_POINTS", hintPoints).apply()
+                    val usedHints = sharedPref.getInt("USED_HINTS", 0)
+                    sharedPref.edit().putInt("USED_HINTS", usedHints + 1).apply()
+                    updatePointsDisplay()
+                } else {
+                    Toast.makeText(this, "Nie ma już błędnych liter do usunięcia!", Toast.LENGTH_SHORT).show()
+                }
             } else {
                 Toast.makeText(this, "Brak dostępnych wskazówek!", Toast.LENGTH_SHORT).show()
             }
@@ -152,8 +161,8 @@ class LvlActivity : AppCompatActivity() {
                 Toast.makeText(this, "To logo już zostało odgadnięte!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            if (hintPoints >= 2) {
-                hintPoints -= 2
+            if (hintPoints >= 10) {
+                hintPoints -= 10
                 sharedPref.edit().putInt("HINT_POINTS", hintPoints).apply()
                 updatePointsDisplay()
                 skipCurrentLogo()
@@ -183,13 +192,19 @@ class LvlActivity : AppCompatActivity() {
                 Toast.makeText(this, "To logo już zostało odgadnięte!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            if (hintPoints > 0) {
-                revealFirstAndLastLetter()
-                hintPoints--
-                sharedPref.edit().putInt("HINT_POINTS", hintPoints).apply()
-                val usedHints = sharedPref.getInt("USED_HINTS", 0)
-                sharedPref.edit().putInt("USED_HINTS", usedHints + 1).apply() // Zwiększ licznik
-                updatePointsDisplay()
+            if (hintPoints >= 4) {
+                val firstIndex = 0
+                val lastIndex = correctAnswer.length - 1
+                if (answerSlots[firstIndex].text != "_" && answerSlots[lastIndex].text != "_") {
+                    Toast.makeText(this, "Pierwsza i ostatnia litera są już ujawnione!", Toast.LENGTH_SHORT).show()
+                } else {
+                    revealFirstAndLastLetter()
+                    hintPoints -= 4
+                    sharedPref.edit().putInt("HINT_POINTS", hintPoints).apply()
+                    val usedHints = sharedPref.getInt("USED_HINTS", 0)
+                    sharedPref.edit().putInt("USED_HINTS", usedHints + 1).apply()
+                    updatePointsDisplay()
+                }
             } else {
                 Toast.makeText(this, "Brak dostępnych wskazówek!", Toast.LENGTH_SHORT).show()
             }
@@ -237,6 +252,16 @@ class LvlActivity : AppCompatActivity() {
         }
     }
 
+
+    private fun setHintButtonsEnabled(enabled: Boolean) {
+        findViewById<ImageButton>(R.id.podpowiedz1).isEnabled = enabled
+        findViewById<ImageButton>(R.id.podpowiedz2).isEnabled = enabled
+        findViewById<ImageButton>(R.id.podpowiedz3).isEnabled = enabled
+        findViewById<ImageButton>(R.id.podpowiedz4).isEnabled = enabled
+        findViewById<ImageButton>(R.id.podpowiedz5).isEnabled = enabled
+        findViewById<ImageButton>(R.id.podpowiedz6).isEnabled = enabled
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         if (isBound) {
@@ -244,8 +269,8 @@ class LvlActivity : AppCompatActivity() {
             isBound = false
         }
 
-        correctSound.release()
-        wrongSound.release()
+
+
     }
 
     private fun generateRandomLetters(count: Int): List<Char> {
@@ -278,11 +303,21 @@ class LvlActivity : AppCompatActivity() {
 
         Picasso.get().load(logo.image).into(logoImageView)
 
+        // Wstępne ładowanie następnych logo
+        if (currentIndex + 1 < logosList.size) {
+            Picasso.get().load(logosList[currentIndex + 1].image).fetch()
+        }
+        if (currentIndex + 2 < logosList.size) {
+            Picasso.get().load(logosList[currentIndex + 2].image).fetch()
+        }
+
         if (isLogoAlreadyGuessed(logo.id, level)) {
             setupGame(correctAnswer)
             disableInput()
+            setHintButtonsEnabled(false)
         } else {
             setupGame(correctAnswer)
+            setHintButtonsEnabled(true)
         }
 
         updateNavButtons()
@@ -297,6 +332,7 @@ class LvlActivity : AppCompatActivity() {
         letterButtons.forEach { it.isEnabled = false }
         answerSlots.forEachIndexed { index, slot ->
             slot.text = correctAnswer.getOrNull(index)?.toString() ?: "_"
+            slot.isClickable = false // Wyłącz klikalność
         }
     }
 
@@ -336,40 +372,39 @@ class LvlActivity : AppCompatActivity() {
         val guessedLogos = sharedPref.getInt("TOTAL_GUESSED_LOGOS", 0)
         val completedLevels = sharedPref.getStringSet("COMPLETED_LEVELS", mutableSetOf()) ?: mutableSetOf()
 
+        // Osiągnięcia za odgadnięcie logotypów
         if (guessedLogos >= 5 && !sharedPref.getBoolean("ACHIEVEMENT_5_LOGOS", false)) {
-            sharedPref.edit().putBoolean("ACHIEVEMENT_3_LOGOS", true).apply()
+            sharedPref.edit().putBoolean("ACHIEVEMENT_5_LOGOS", true).apply()
             Toast.makeText(this, "Osiągnięcie odblokowane: Początek przygody!", Toast.LENGTH_LONG).show()
         }
         if (guessedLogos >= 40 && !sharedPref.getBoolean("ACHIEVEMENT_40_LOGOS", false)) {
-            sharedPref.edit().putBoolean("ACHIEVEMENT_5_LOGOS", true).apply()
+            sharedPref.edit().putBoolean("ACHIEVEMENT_40_LOGOS", true).apply()
             Toast.makeText(this, "Osiągnięcie odblokowane: Entuzjasta logotypów!", Toast.LENGTH_LONG).show()
         }
         if (guessedLogos >= 80 && !sharedPref.getBoolean("ACHIEVEMENT_80_LOGOS", false)) {
-            sharedPref.edit().putBoolean("ACHIEVEMENT_5_LOGOS", true).apply()
+            sharedPref.edit().putBoolean("ACHIEVEMENT_80_LOGOS", true).apply()
             Toast.makeText(this, "Osiągnięcie odblokowane: Mistrz logotypów!", Toast.LENGTH_LONG).show()
         }
         if (guessedLogos >= 200 && !sharedPref.getBoolean("ACHIEVEMENT_200_LOGOS", false)) {
-            sharedPref.edit().putBoolean("ACHIEVEMENT_5_LOGOS", true).apply()
+            sharedPref.edit().putBoolean("ACHIEVEMENT_200_LOGOS", true).apply()
             Toast.makeText(this, "Osiągnięcie odblokowane: Ekspert!", Toast.LENGTH_LONG).show()
         }
 
-
-        //Poziomy
+        // Osiągnięcia za ukończenie poziomów
         if (completedLevels.contains("1") && !sharedPref.getBoolean("ACHIEVEMENT_LVL1", false)) {
             sharedPref.edit().putBoolean("ACHIEVEMENT_LVL1", true).apply()
             Toast.makeText(this, "Osiągnięcie odblokowane: Ekspert pierwszego poziomu!", Toast.LENGTH_LONG).show()
         }
-
         if (completedLevels.contains("5") && !sharedPref.getBoolean("ACHIEVEMENT_LVL5", false)) {
             sharedPref.edit().putBoolean("ACHIEVEMENT_LVL5", true).apply()
             Toast.makeText(this, "Osiągnięcie odblokowane: Połowa drogi!", Toast.LENGTH_LONG).show()
         }
         if (completedLevels.contains("7") && !sharedPref.getBoolean("ACHIEVEMENT_LVL7", false)) {
-            sharedPref.edit().putBoolean("ACHIEVEMENT_LVL1", true).apply()
+            sharedPref.edit().putBoolean("ACHIEVEMENT_LVL7", true).apply()
             Toast.makeText(this, "Osiągnięcie odblokowane: Ekspert poziomów!", Toast.LENGTH_LONG).show()
         }
         if (completedLevels.contains("10") && !sharedPref.getBoolean("ACHIEVEMENT_LVL10", false)) {
-            sharedPref.edit().putBoolean("ACHIEVEMENT_LVL1", true).apply()
+            sharedPref.edit().putBoolean("ACHIEVEMENT_LVL10", true).apply()
             Toast.makeText(this, "Osiągnięcie odblokowane: Niepowstrzymany!", Toast.LENGTH_LONG).show()
         }
     }
@@ -380,7 +415,7 @@ class LvlActivity : AppCompatActivity() {
         if (!userAnswer.contains("_")) {
             if (userAnswer.equals(correctAnswer, ignoreCase = true)) {
                 Toast.makeText(this, "Brawo! Dobra odpowiedź!", Toast.LENGTH_SHORT).show()
-                correctSound.start()
+                musicService?.playDobrySound()
 
                 val level = intent.getIntExtra("LEVEL", -1)
                 if (level == -1) {
@@ -403,12 +438,26 @@ class LvlActivity : AppCompatActivity() {
                 }
             } else {
                 Toast.makeText(this, "Błędna odpowiedź! Spróbuj ponownie!", Toast.LENGTH_SHORT).show()
-                wrongSound.start()
+                musicService?.playZlySound()
 
                 answerContainer.postDelayed({
-                    resetGame()
+                    resetNonHintSlots() // Zresetuj tylko sloty nieujawnione
                 }, 1000)
             }
+        }
+    }
+
+    private fun resetNonHintSlots() {
+        val lettersToRestore = mutableListOf<String>()
+        for (i in answerSlots.indices) {
+            if (!hintRevealedSlots[i] && answerSlots[i].text != "_") {
+                lettersToRestore.add(answerSlots[i].text.toString())
+                answerSlots[i].text = "_"
+            }
+        }
+        for (letter in lettersToRestore) {
+            val button = letterButtons.find { it.text == letter && it.visibility == View.INVISIBLE }
+            button?.visibility = View.VISIBLE
         }
     }
 
@@ -441,6 +490,7 @@ class LvlActivity : AppCompatActivity() {
             val correctChar = correctAnswer[index].toString()
 
             answerSlots[index].text = correctChar
+            hintRevealedSlots[index] = true // Oznacz jako ujawnione przez podpowiedź
 
             val matchingButton = letterButtons.find { it.text == correctChar && it.visibility == View.VISIBLE }
             matchingButton?.visibility = View.INVISIBLE
@@ -452,18 +502,18 @@ class LvlActivity : AppCompatActivity() {
         val firstIndex = 0
         val lastIndex = correctAnswer.length - 1
 
-        // Ujawnij pierwszą literę, jeśli jest pusta
         if (answerSlots[firstIndex].text == "_" || answerSlots[firstIndex].text.isBlank()) {
             val firstChar = correctAnswer[firstIndex].toString()
             answerSlots[firstIndex].text = firstChar
+            hintRevealedSlots[firstIndex] = true // Oznacz jako ujawnione
             val firstButton = letterButtons.find { it.text == firstChar && it.visibility == View.VISIBLE }
             firstButton?.visibility = View.INVISIBLE
         }
 
-        // Ujawnij ostatnią literę, jeśli jest pusta
         if (answerSlots[lastIndex].text == "_" || answerSlots[lastIndex].text.isBlank()) {
             val lastChar = correctAnswer[lastIndex].toString()
             answerSlots[lastIndex].text = lastChar
+            hintRevealedSlots[lastIndex] = true // Oznacz jako ujawnione
             val lastButton = letterButtons.find { it.text == lastChar && it.visibility == View.VISIBLE }
             lastButton?.visibility = View.INVISIBLE
         }
@@ -490,6 +540,8 @@ class LvlActivity : AppCompatActivity() {
             saveTotalPoints(logo.points)
             incrementGuessedLogos()
             markLogoAsGuessed(logo.id, level)
+            musicService?.playDobrySound()
+            Thread.sleep(1000) // 500 ms opóźnienia, aby dźwięk się odtworzył
         }
 
         currentIndex = findFirstUnsolvedLogo()
@@ -501,6 +553,8 @@ class LvlActivity : AppCompatActivity() {
         lettersContainer.removeAllViews()
         letterButtons.clear()
         answerSlots.clear()
+
+        hintRevealedSlots = MutableList(correctAnswer.length) { false } // Inicjalizacja
 
         val dp = resources.displayMetrics.density
         val tileSize = (40 * dp).toInt()
@@ -516,11 +570,22 @@ class LvlActivity : AppCompatActivity() {
                 layoutParams = FlexboxLayout.LayoutParams(tileSize, tileSize).apply {
                     setMargins(marginSize, marginSize, marginSize, marginSize)
                 }
+                setOnClickListener {
+                    val index = answerSlots.indexOf(this)
+                    if (!hintRevealedSlots[index] && text != "_") {
+                        val letter = text.toString()
+                        text = "_"
+                        val button = letterButtons.find { it.text == letter && it.visibility == View.INVISIBLE }
+                        button?.visibility = View.VISIBLE
+                        musicService?.playClickSound() // Odtwórz dźwięk przy odkliknięciu
+                    }
+                }
             }
             answerSlots.add(textView)
             answerContainer.addView(textView)
         }
 
+        // Reszta kodu metody pozostaje bez zmian
         val extraLettersCount = minOf(6, 12 - correctAnswer.length)
         val shuffledLetters = (correctAnswer.toList() + generateRandomLetters(extraLettersCount)).shuffled()
 
@@ -588,8 +653,8 @@ class LvlActivity : AppCompatActivity() {
             Toast.makeText(this, "To logo już zostało odgadnięte!", Toast.LENGTH_SHORT).show()
             return
         }
-        if (hintPoints > 0) {
-            hintPoints--
+        if (hintPoints >= 2) {
+            hintPoints -= 2
             sharedPref.edit().putInt("HINT_POINTS", hintPoints).apply()
             updatePointsDisplay()
 
