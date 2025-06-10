@@ -9,7 +9,7 @@ import android.view.View
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 
-class SummaryActivity : AppCompatActivity() {
+class SummaryActivityCat : AppCompatActivity() {
     private var musicService: MusicService? = null
     private var isBound = false
 
@@ -19,13 +19,12 @@ class SummaryActivity : AppCompatActivity() {
             musicService = binder.getService()
             isBound = true
 
-            // Połączono z serwisem – odtwórz dźwięk zwycięstwa
+            // Odtwórz dźwięk wygranej
             musicService?.playVictorySound()
 
-            // Jeśli to 10 poziom – odtwórz specjalny dźwięk
-            val completedLevel = intent.getIntExtra("COMPLETED_LEVEL", -1)
-            val totalLevels = 10
-            if (completedLevel == totalLevels) {
+            // Jeśli to ostatnia kategoria (10), odtwórz specjalny dźwięk
+            val completedCategory = intent.getIntExtra("COMPLETED_CATEGORY", -1)
+            if (completedCategory == 3) {
                 musicService?.playLvl10Sound()
             }
         }
@@ -37,36 +36,36 @@ class SummaryActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.summary_activity)
+        setContentView(R.layout.summary_activity_cat)
 
-        // Połączenie z MusicService
         val serviceIntent = Intent(this, MusicService::class.java)
         bindService(serviceIntent, serviceConnection, BIND_AUTO_CREATE)
 
-        val completedLevel = intent.getIntExtra("COMPLETED_LEVEL", -1)
-        val totalLevels = 10
+        val completedCategory = intent.getIntExtra("COMPLETED_CATEGORY", -1)
 
-        if (completedLevel >= totalLevels) {
-            findViewById<ImageButton>(R.id.btnNextLevel).visibility = View.GONE
+        // Ukryj przycisk dalej, jeśli to ostatnia kategoria
+        if (completedCategory >= 3) {
+            findViewById<ImageButton>(R.id.btnNextCategory).visibility = View.GONE
         }
 
         findViewById<ImageButton>(R.id.btnBackToMenu).setOnClickListener {
             musicService?.playClickSound()
             musicService?.stopLvl10Sound()
-            val intent = Intent(this, CategoryActivity::class.java)
+            val intent = Intent(this, KategorieActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             startActivity(intent)
             finish()
         }
 
-        findViewById<ImageButton>(R.id.btnNextLevel).setOnClickListener {
+        findViewById<ImageButton>(R.id.btnNextCategory).setOnClickListener {
             musicService?.playNextLvlSound()
 
-            if (completedLevel != -1) {
-                val nextLevel = completedLevel + 1
-                val intent = Intent(this, LvlActivity::class.java)
-                intent.putExtra("LEVEL", nextLevel)
+            if (completedCategory != -1) {
+                val nextCategory = completedCategory + 1
+                val intent = Intent(this, KatActivity::class.java)
+                intent.putExtra("CATEGORY", nextCategory)
                 startActivity(intent)
+
             }
 
             musicService?.stopLvl10Sound()

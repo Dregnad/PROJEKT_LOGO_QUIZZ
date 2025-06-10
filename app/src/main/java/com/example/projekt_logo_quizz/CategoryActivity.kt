@@ -36,8 +36,8 @@ class CategoryActivity : AppCompatActivity() {
 
     private val levelRequirements = mapOf(
         1 to 0,
-        2 to 10,
-        3 to 20,
+        2 to 5,
+        3 to 10,
         4 to 30,
         5 to 40,
         6 to 60,

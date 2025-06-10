@@ -20,13 +20,6 @@ class KategorieActivity : AppCompatActivity() {
         1 to 0,
         2 to 4,
         3 to 8,
-        4 to 12,
-        5 to 16,
-        6 to 20,
-        7 to 24,
-        8 to 28,
-        9 to 32,
-        10 to 36
     )
 
     @SuppressLint("MissingInflatedId")
@@ -47,7 +40,7 @@ class KategorieActivity : AppCompatActivity() {
 
         val mode2Points = sharedPref.getInt("MODE2_POINTS", 0)
 
-        for (category in 1..10) {
+        for (category in 1..3) {
             val categoryLayoutId = resources.getIdentifier("kat$category", "id", packageName)
             val categoryLayout = findViewById<RelativeLayout>(categoryLayoutId)
 
@@ -68,7 +61,7 @@ class KategorieActivity : AppCompatActivity() {
             val logosTextView = findViewById<TextView>(logosViewId)
 
             pointsTextView?.text = "Punkty: $points"
-            logosTextView?.text = "Loga: $completedLogosCount/20"
+            logosTextView?.text = "Loga: $completedLogosCount/15"
 
             val requiredPoints = categoryRequirements[category] ?: 0
             val remainingPoints = requiredPoints - mode2Points

@@ -33,6 +33,7 @@ class KatActivity : AppCompatActivity() {
     private var musicService: MusicService? = null
     private var isBound = false
 
+
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             val binder = service as MusicService.MusicBinder
@@ -54,6 +55,7 @@ class KatActivity : AppCompatActivity() {
     private lateinit var answerSlots: MutableList<TextView>
     private lateinit var pointsTextView: TextView
     private lateinit var correctSound: MediaPlayer
+    private lateinit var hintRevealedSlots: MutableList<Boolean>
     private lateinit var wrongSound: MediaPlayer
     private var correctAnswer: String = ""
     private var currentIndex: Int = 0
@@ -108,14 +110,14 @@ class KatActivity : AppCompatActivity() {
 
         findViewById<ImageButton>(R.id.podpowiedz1).setOnClickListener {
             musicService?.playClickSound()
-            val level = intent.getIntExtra("CATEGORY", -1)
-            if (isLogoAlreadyGuessed(logosList[currentIndex].id, level)) {
+            val category = intent.getIntExtra("CATEGORY", -1)
+            if (isLogoAlreadyGuessed(logosList[currentIndex].id, category)) {
                 Toast.makeText(this, "To logo już zostało odgadnięte!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            if (hintPoints > 0) {
+            if (hintPoints >= 2) {
                 revealRandomLetter()
-                hintPoints--
+                hintPoints -= 2
                 sharedPref.edit().putInt("HINT_POINTS", hintPoints).apply()
                 val usedHints = sharedPref.getInt("USED_HINTS", 0)
                 sharedPref.edit().putInt("USED_HINTS", usedHints + 1).apply()
@@ -127,45 +129,57 @@ class KatActivity : AppCompatActivity() {
 
         findViewById<ImageButton>(R.id.podpowiedz2).setOnClickListener {
             musicService?.playClickSound()
-            val level = intent.getIntExtra("CATEGORY", -1)
-            if (isLogoAlreadyGuessed(logosList[currentIndex].id, level)) {
+            val category = intent.getIntExtra("CATEGORY", -1)
+            if (isLogoAlreadyGuessed(logosList[currentIndex].id, category)) {
                 Toast.makeText(this, "To logo już zostało odgadnięte!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             if (hintPoints > 0) {
-                removeOneWrongLetter()
-                hintPoints--
+                val correctLetters = correctAnswer.toSet()
+                val wrongButtons = letterButtons.filter {
+                    it.visibility == View.VISIBLE && it.text[0] !in correctLetters
+                }
+                if (wrongButtons.isNotEmpty()) {
+                    removeOneWrongLetter()
+                    hintPoints--
+                    sharedPref.edit().putInt("HINT_POINTS", hintPoints).apply()
+                    val usedHints = sharedPref.getInt("USED_HINTS", 0)
+                    sharedPref.edit().putInt("USED_HINTS", usedHints + 1).apply()
+                    updatePointsDisplay()
+                } else {
+                    Toast.makeText(this, "Nie ma już błędnych liter do usunięcia!", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "Brak dostępnych wskazówek!", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
+        findViewById<ImageButton>(R.id.podpowiedz3).setOnClickListener {
+            musicService?.playClickSound()
+            val category = intent.getIntExtra("CATEGORY", -1)
+            if (isLogoAlreadyGuessed(logosList[currentIndex].id, category)) {
+                Toast.makeText(this, "To logo już zostało odgadnięte!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (hintPoints >= 10) {
+                hintPoints -= 10
                 sharedPref.edit().putInt("HINT_POINTS", hintPoints).apply()
+                updatePointsDisplay()
+                skipCurrentLogo()
                 val usedHints = sharedPref.getInt("USED_HINTS", 0)
-                sharedPref.edit().putInt("USED_HINTS", usedHints + 1).apply()
+                sharedPref.edit().putInt("USED_HINTS", usedHints + 1).apply() // Zwiększ licznik
                 updatePointsDisplay()
             } else {
                 Toast.makeText(this, "Brak dostępnych wskazówek!", Toast.LENGTH_SHORT).show()
             }
         }
 
-        findViewById<ImageButton>(R.id.podpowiedz3).setOnClickListener {
-            musicService?.playClickSound()
-            val level = intent.getIntExtra("CATEGORY", -1)
-            if (isLogoAlreadyGuessed(logosList[currentIndex].id, level)) {
-                Toast.makeText(this, "To logo już zostało odgadnięte!", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            if (hintPoints >= 2) {
-                hintPoints -= 2
-                sharedPref.edit().putInt("HINT_POINTS", hintPoints).apply()
-                val usedHints = sharedPref.getInt("USED_HINTS", 0)
-                sharedPref.edit().putInt("USED_HINTS", usedHints + 2).apply()
-                updatePointsDisplay()
-                skipCurrentLogo()
-            } else {
-                Toast.makeText(this, "Potrzebujesz 2 punkty wskazówek!", Toast.LENGTH_SHORT).show()
-            }
-        }
 
         findViewById<ImageButton>(R.id.podpowiedz4).setOnClickListener {
             musicService?.playClickSound()
             showHint(1)
+
         }
 
         findViewById<ImageButton>(R.id.podpowiedz5).setOnClickListener {
@@ -175,18 +189,24 @@ class KatActivity : AppCompatActivity() {
 
         findViewById<ImageButton>(R.id.podpowiedz6).setOnClickListener {
             musicService?.playClickSound()
-            val level = intent.getIntExtra("CATEGORY", -1)
-            if (isLogoAlreadyGuessed(logosList[currentIndex].id, level)) {
+            val category = intent.getIntExtra("CATEGORY", -1)
+            if (isLogoAlreadyGuessed(logosList[currentIndex].id, category)) {
                 Toast.makeText(this, "To logo już zostało odgadnięte!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            if (hintPoints > 0) {
-                revealFirstAndLastLetter()
-                hintPoints--
-                sharedPref.edit().putInt("HINT_POINTS", hintPoints).apply()
-                val usedHints = sharedPref.getInt("USED_HINTS", 0)
-                sharedPref.edit().putInt("USED_HINTS", usedHints + 1).apply()
-                updatePointsDisplay()
+            if (hintPoints >= 4) {
+                val firstIndex = 0
+                val lastIndex = correctAnswer.length - 1
+                if (answerSlots[firstIndex].text != "_" && answerSlots[lastIndex].text != "_") {
+                    Toast.makeText(this, "Pierwsza i ostatnia litera są już ujawnione!", Toast.LENGTH_SHORT).show()
+                } else {
+                    revealFirstAndLastLetter()
+                    hintPoints -= 4
+                    sharedPref.edit().putInt("HINT_POINTS", hintPoints).apply()
+                    val usedHints = sharedPref.getInt("USED_HINTS", 0)
+                    sharedPref.edit().putInt("USED_HINTS", usedHints + 1).apply()
+                    updatePointsDisplay()
+                }
             } else {
                 Toast.makeText(this, "Brak dostępnych wskazówek!", Toast.LENGTH_SHORT).show()
             }
@@ -194,27 +214,29 @@ class KatActivity : AppCompatActivity() {
 
         letterButtons = mutableListOf()
         answerSlots = mutableListOf()
+        sharedPref = getSharedPreferences("GamePrefs", MODE_PRIVATE)
+        hintPoints = sharedPref.getInt("HINT_POINTS", 0)
 
-        val level = intent.getIntExtra("CATEGORY", -1)
-        if (level == -1) {
+        val category = intent.getIntExtra("CATEGORY", -1)
+        if (category == -1) {
             Toast.makeText(this, "Błąd ładowania poziomu!", Toast.LENGTH_LONG).show()
             finish()
             return
         }
 
-        if (isLevelAlreadyCompleted(level)) {
+        if (iscategoryAlreadyCompleted(category)) {
             goToSummary()
             return
         }
 
-        loadLogosForLevel(level)
+        loadLogosForcategory(category)
         updatePointsDisplay()
     }
 
-    private fun loadLogosForLevel(level: Int) {
+    private fun loadLogosForcategory(category: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val response = supabase.from("kategoria$level")
+                val response = supabase.from("kategoria$category")
                     .select()
                     .decodeList<Logo>()
 
@@ -232,22 +254,40 @@ class KatActivity : AppCompatActivity() {
         }
     }
 
+    private fun setHintButtonsEnabled(enabled: Boolean) {
+        findViewById<ImageButton>(R.id.podpowiedz1).isEnabled = enabled
+        findViewById<ImageButton>(R.id.podpowiedz2).isEnabled = enabled
+        findViewById<ImageButton>(R.id.podpowiedz3).isEnabled = enabled
+        findViewById<ImageButton>(R.id.podpowiedz4).isEnabled = enabled
+        findViewById<ImageButton>(R.id.podpowiedz5).isEnabled = enabled
+        findViewById<ImageButton>(R.id.podpowiedz6).isEnabled = enabled
+    }
+
+
     private fun generateRandomLetters(count: Int): List<Char> {
         val alphabet = ('A'..'Z').toList()
         return List(count) { alphabet.random() }
     }
 
     private fun findFirstUnsolvedLogo(): Int {
-        val level = intent.getIntExtra("CATEGORY", -1)
-        if (level == -1) return logosList.size
+        val category = intent.getIntExtra("CATEGORY", -1)
+        if (category == -1) return logosList.size
 
         for (i in logosList.indices) {
-            if (!isLogoAlreadyGuessed(logosList[i].id, level)) {
+            if (!isLogoAlreadyGuessed(logosList[i].id, category)) {
                 return i
             }
         }
         return logosList.size
     }
+
+    private fun markLevelAsCompleted(category: Int) {
+        val completedCategory = sharedPref.getStringSet("COMPLETED_CATEGORY", mutableSetOf()) ?: mutableSetOf()
+        completedCategory.add(category.toString())
+        sharedPref.edit().putStringSet("COMPLETED_CATEGORY", completedCategory).apply()
+        checkAchievements()
+    }
+
 
     private fun loadQuestion() {
         if (currentIndex >= logosList.size) {
@@ -256,21 +296,37 @@ class KatActivity : AppCompatActivity() {
             return
         }
 
+
         val logo = logosList[currentIndex]
         correctAnswer = logo.name.uppercase()
-        val level = intent.getIntExtra("CATEGORY", -1)
+        val category = intent.getIntExtra("CATEGORY", -1)
+
 
         Picasso.get().load(logo.image).into(logoImageView)
 
-        if (isLogoAlreadyGuessed(logo.id, level)) {
+
+        // Wstępne ładowanie następnych logo
+        if (currentIndex + 1 < logosList.size) {
+            Picasso.get().load(logosList[currentIndex + 1].image).fetch()
+        }
+        if (currentIndex + 2 < logosList.size) {
+            Picasso.get().load(logosList[currentIndex + 2].image).fetch()
+        }
+
+
+        if (isLogoAlreadyGuessed(logo.id, category)) {
             setupGame(correctAnswer)
             disableInput()
+            setHintButtonsEnabled(false)
         } else {
             setupGame(correctAnswer)
+            setHintButtonsEnabled(true)
         }
+
 
         updateNavButtons()
     }
+
 
     private fun updateNavButtons() {
         findViewById<ImageButton>(R.id.btnNext).isEnabled = currentIndex < logosList.size - 1
@@ -281,6 +337,7 @@ class KatActivity : AppCompatActivity() {
         letterButtons.forEach { it.isEnabled = false }
         answerSlots.forEachIndexed { index, slot ->
             slot.text = correctAnswer.getOrNull(index)?.toString() ?: "_"
+            slot.isClickable = false
         }
     }
 
@@ -289,14 +346,14 @@ class KatActivity : AppCompatActivity() {
         answerSlots.forEach { it.text = "_" }
     }
 
-    private fun checkIfLevelCompleted(): Boolean {
-        val level = intent.getIntExtra("CATEGORY", -1)
-        if (level == -1) {
+    private fun checkIfcategoryCompleted(): Boolean {
+        val category = intent.getIntExtra("CATEGORY", -1)
+        if (category == -1) {
             Toast.makeText(this, "Błąd poziomu!", Toast.LENGTH_SHORT).show()
             return false
         }
 
-        return logosList.all { isLogoAlreadyGuessed(it.id, level) }
+        return logosList.all { isLogoAlreadyGuessed(it.id, category) }
     }
 
     private fun prevLogo() {
@@ -316,41 +373,35 @@ class KatActivity : AppCompatActivity() {
 
     private fun checkAchievements() {
         val guessedLogos = sharedPref.getInt("TOTAL_GUESSED_LOGOS", 0)
-        val completedLevels = sharedPref.getStringSet("COMPLETED_LEVELS", mutableSetOf()) ?: mutableSetOf()
+        val completedCategories = sharedPref.getStringSet("COMPLETED_CATEGORIES", mutableSetOf()) ?: mutableSetOf()
 
-        if (guessedLogos >= 3 && !sharedPref.getBoolean("ACHIEVEMENT_3_LOGOS", false)) {
-            sharedPref.edit().putBoolean("ACHIEVEMENT_3_LOGOS", true).apply()
-            Toast.makeText(this, "Osiągnięcie odblokowane: Początek przygody!", Toast.LENGTH_LONG).show()
-        }
-
-        if (completedLevels.contains("1") && !sharedPref.getBoolean("ACHIEVEMENT_LVL1", false)) {
-            sharedPref.edit().putBoolean("ACHIEVEMENT_LVL1", true).apply()
-            Toast.makeText(this, "Osiągnięcie odblokowane: Ekspert pierwszego poziomu!", Toast.LENGTH_LONG).show()
-        }
     }
 
     private fun checkAnswer() {
         val userAnswer = answerSlots.joinToString("") { it.text.toString() }
 
         if (!userAnswer.contains("_")) {
+
+            letterButtons.forEach { it.isEnabled = false }
+
             if (userAnswer.equals(correctAnswer, ignoreCase = true)) {
                 Toast.makeText(this, "Brawo! Dobra odpowiedź!", Toast.LENGTH_SHORT).show()
-                correctSound.start()
+                musicService?.playDobrySound()
 
-                val level = intent.getIntExtra("CATEGORY", -1)
-                if (level == -1) {
+                val category = intent.getIntExtra("CATEGORY", -1)
+                if (category == -1) {
                     Toast.makeText(this, "Błąd poziomu!", Toast.LENGTH_SHORT).show()
                     return
                 }
 
-                if (!isLogoAlreadyGuessed(logosList[currentIndex].id, level)) {
+                if (!isLogoAlreadyGuessed(logosList[currentIndex].id, category)) {
                     saveTotalPoints(logosList[currentIndex].points)
                     incrementGuessedLogos()
-                    markLogoAsGuessed(logosList[currentIndex].id, level)
+                    markLogoAsGuessed(logosList[currentIndex].id, category)
                 }
 
-                if (checkIfLevelCompleted()) {
-                    markLevelAsCompleted(level)
+                if (checkIfcategoryCompleted()) {
+                    markcategoryAsCompleted(category)
                     goToSummary()
                 } else {
                     currentIndex = findFirstUnsolvedLogo()
@@ -358,14 +409,27 @@ class KatActivity : AppCompatActivity() {
                 }
             } else {
                 Toast.makeText(this, "Błędna odpowiedź! Spróbuj ponownie!", Toast.LENGTH_SHORT).show()
-                wrongSound.start()
+                musicService?.playZlySound()
 
-                answerContainer.postDelayed({
-                    resetGame()
-                }, 1000)
+                resetGame()
             }
         }
     }
+
+    private fun resetNonHintSlots() {
+        val lettersToRestore = mutableListOf<String>()
+        for (i in answerSlots.indices) {
+            if (!hintRevealedSlots[i] && answerSlots[i].text != "_") {
+                lettersToRestore.add(answerSlots[i].text.toString())
+                answerSlots[i].text = "_"
+            }
+        }
+        for (letter in lettersToRestore) {
+            val button = letterButtons.find { it.text == letter && it.visibility == View.INVISIBLE }
+            button?.visibility = View.VISIBLE
+        }
+    }
+
 
     private fun incrementGuessedLogos() {
         val guessedLogos = sharedPref.getInt("TOTAL_GUESSED_LOGOS", 0) + 1
@@ -375,6 +439,7 @@ class KatActivity : AppCompatActivity() {
 
     private fun resetGame() {
         setupGame(correctAnswer)
+        letterButtons.forEach { it.isEnabled = true }
     }
 
     private fun updatePointsDisplay() {
@@ -396,7 +461,10 @@ class KatActivity : AppCompatActivity() {
             val index = randomSlot.index
             val correctChar = correctAnswer[index].toString()
 
+
             answerSlots[index].text = correctChar
+            hintRevealedSlots[index] = true
+
 
             val matchingButton = letterButtons.find { it.text == correctChar && it.visibility == View.VISIBLE }
             matchingButton?.visibility = View.INVISIBLE
@@ -404,26 +472,33 @@ class KatActivity : AppCompatActivity() {
         checkAnswer()
     }
 
+
     private fun revealFirstAndLastLetter() {
         val firstIndex = 0
         val lastIndex = correctAnswer.length - 1
 
+
         if (answerSlots[firstIndex].text == "_" || answerSlots[firstIndex].text.isBlank()) {
             val firstChar = correctAnswer[firstIndex].toString()
             answerSlots[firstIndex].text = firstChar
+            hintRevealedSlots[firstIndex] = true
             val firstButton = letterButtons.find { it.text == firstChar && it.visibility == View.VISIBLE }
             firstButton?.visibility = View.INVISIBLE
         }
 
+
         if (answerSlots[lastIndex].text == "_" || answerSlots[lastIndex].text.isBlank()) {
             val lastChar = correctAnswer[lastIndex].toString()
             answerSlots[lastIndex].text = lastChar
+            hintRevealedSlots[lastIndex] = true
             val lastButton = letterButtons.find { it.text == lastChar && it.visibility == View.VISIBLE }
             lastButton?.visibility = View.INVISIBLE
         }
 
+
         checkAnswer()
     }
+
 
     private fun removeOneWrongLetter() {
         val correctLetters = correctAnswer.toSet()
@@ -436,38 +511,44 @@ class KatActivity : AppCompatActivity() {
     }
 
     private fun skipCurrentLogo() {
-        val level = intent.getIntExtra("CATEGORY", -1)
-        if (level == -1) return
+        val category= intent.getIntExtra("CATEGORY", -1)
+        if (category == -1) return
+
 
         val logo = logosList[currentIndex]
-        if (!isLogoAlreadyGuessed(logo.id, level)) {
+        if (!isLogoAlreadyGuessed(logo.id, category)) {
             saveTotalPoints(logo.points)
             incrementGuessedLogos()
-            markLogoAsGuessed(logo.id, level)
+            markLogoAsGuessed(logo.id, category)
+            musicService?.playDobrySound()
+            Thread.sleep(1500)
         }
+
 
         currentIndex = findFirstUnsolvedLogo()
         loadQuestion()
     }
 
+
     private fun showHint(hintNumber: Int) {
-        val level = intent.getIntExtra("CATEGORY", -1)
-        if (isLogoAlreadyGuessed(logosList[currentIndex].id, level)) {
+        val category = intent.getIntExtra("CATEGORY", -1)
+        if (isLogoAlreadyGuessed(logosList[currentIndex].id, category)) {
             Toast.makeText(this, "To logo już zostało odgadnięte!", Toast.LENGTH_SHORT).show()
             return
         }
-        if (hintPoints > 0) {
-            hintPoints--
+        if (hintPoints >= 2) {
+            hintPoints -= 2
             sharedPref.edit().putInt("HINT_POINTS", hintPoints).apply()
-            val usedHints = sharedPref.getInt("USED_HINTS", 0)
-            sharedPref.edit().putInt("USED_HINTS", usedHints + 1).apply()
             updatePointsDisplay()
+
 
             val hintText = if (hintNumber == 1) logosList[currentIndex].p1 else logosList[currentIndex].p2
             val hintView = if (hintNumber == 1) hintP1TextView else hintP2TextView
 
+
             hintView.text = hintText
             hintView.visibility = View.VISIBLE
+
 
             hintView.postDelayed({
                 hintView.visibility = View.GONE
@@ -489,7 +570,7 @@ class KatActivity : AppCompatActivity() {
 
         for (i in correctAnswer.indices) {
             val textView = TextView(this).apply {
-                text = "_"
+                text = if (correctAnswer[i] == ' ') " " else "_"
                 textSize = 24f
                 setTextColor(Color.WHITE)
                 background = ContextCompat.getDrawable(this@KatActivity, R.drawable.kafelek_zga)
@@ -502,8 +583,9 @@ class KatActivity : AppCompatActivity() {
             answerContainer.addView(textView)
         }
 
-        val extraLettersCount = minOf(6, 12 - correctAnswer.length)
-        val shuffledLetters = (correctAnswer.toList() + generateRandomLetters(extraLettersCount)).shuffled()
+        val lettersInAnswer = correctAnswer.filter { it != ' ' }.toList()
+        val extraLettersCount = maxOf(0, minOf(6, 20 - correctAnswer.length))
+        val shuffledLetters = (lettersInAnswer + generateRandomLetters(extraLettersCount)).shuffled()
 
         shuffledLetters.forEachIndexed { index, letter ->
             val button = Button(this).apply {
@@ -526,11 +608,17 @@ class KatActivity : AppCompatActivity() {
     }
 
     private fun onLetterClicked(button: Button) {
+        val hasEmptySlot = answerSlots.any { it.text.toString() == "_" }
+        if (!hasEmptySlot) {
+            Log.d("KatActivity", "Brak pustych slotów, ignoruję kliknięcie litery")
+            return
+        }
+
         val letter = button.text[0]
         button.visibility = View.INVISIBLE
 
         for (textView in answerSlots) {
-            if (textView.text.toString().isBlank() || textView.text.toString() == "_") {
+            if (textView.text.toString() == "_") {
                 textView.text = letter.toString()
                 break
             }
@@ -553,48 +641,49 @@ class KatActivity : AppCompatActivity() {
             sharedPref.edit().putInt("HINT_POINTS", hintPoints).apply()
         }
 
-        val level = intent.getIntExtra("CATEGORY", -1)
-        if (level != -1) {
-            val levelPointsKey = "POINTS_KAT$level"
-            val levelPoints = sharedPref.getInt(levelPointsKey, 0) + points
-            sharedPref.edit().putInt(levelPointsKey, levelPoints).apply()
+        val category = intent.getIntExtra("CATEGORY", -1)
+        if (category != -1) {
+            val categoryPointsKey = "POINTS_KAT$category"
+            val categoryPoints = sharedPref.getInt(categoryPointsKey, 0) + points
+            sharedPref.edit().putInt(categoryPointsKey, categoryPoints).apply()
         }
 
         updatePointsDisplay()
     }
 
-    private fun markLogoAsGuessed(logoId: Int, level: Int) {
-        val guessedLogos = sharedPref.getStringSet("GUESSED_LOGOS_KAT$level", mutableSetOf()) ?: mutableSetOf()
+    private fun markLogoAsGuessed(logoId: Int, category: Int) {
+        val guessedLogos = sharedPref.getStringSet("GUESSED_LOGOS_KAT$category", mutableSetOf()) ?: mutableSetOf()
         guessedLogos.add(logoId.toString())
-        sharedPref.edit().putStringSet("GUESSED_LOGOS_KAT$level", guessedLogos).apply()
+        sharedPref.edit().putStringSet("GUESSED_LOGOS_KAT$category", guessedLogos).apply()
     }
 
-    private fun isLogoAlreadyGuessed(logoId: Int, level: Int): Boolean {
-        val guessedLogos = sharedPref.getStringSet("GUESSED_LOGOS_KAT$level", mutableSetOf()) ?: mutableSetOf()
+    private fun isLogoAlreadyGuessed(logoId: Int, category: Int): Boolean {
+        val guessedLogos = sharedPref.getStringSet("GUESSED_LOGOS_KAT$category", mutableSetOf()) ?: mutableSetOf()
         return guessedLogos.contains(logoId.toString())
     }
 
-    private fun markLevelAsCompleted(level: Int) {
-        val completedLevels = sharedPref.getStringSet("COMPLETED_LEVELS", mutableSetOf()) ?: mutableSetOf()
-        completedLevels.add(level.toString())
-        sharedPref.edit().putStringSet("COMPLETED_LEVELS", completedLevels).apply()
+    private fun markcategoryAsCompleted(category: Int) {
+        val completedCategories = sharedPref.getStringSet("COMPLETED_CATEGORIES", mutableSetOf()) ?: mutableSetOf()
+        completedCategories.add(category.toString())
+        sharedPref.edit().putStringSet("COMPLETED_CATEGORIES", completedCategories).apply()
         checkAchievements()
     }
 
-    private fun isLevelAlreadyCompleted(level: Int): Boolean {
-        val completedLevels = sharedPref.getStringSet("COMPLETED_LEVELS", mutableSetOf()) ?: mutableSetOf()
-        return completedLevels.contains(level.toString())
+    private fun iscategoryAlreadyCompleted(category: Int): Boolean {
+        val completedCategories = sharedPref.getStringSet("COMPLETED_CATEGORIES", mutableSetOf()) ?: mutableSetOf()
+        return completedCategories.contains(category.toString())
     }
 
 
 
     private fun goToSummary() {
         val category = intent.getIntExtra("CATEGORY", 1)
-        val summaryIntent = Intent(this, SummaryActivity::class.java)
+        val summaryIntent = Intent(this, SummaryActivityCat::class.java)
         summaryIntent.putExtra("COMPLETED_CATEGORY", category)
         startActivity(summaryIntent)
         finish()
     }
+
 
     override fun onDestroy() {
         super.onDestroy()
@@ -602,8 +691,6 @@ class KatActivity : AppCompatActivity() {
             unbindService(serviceConnection)
             isBound = false
         }
-        correctSound.release()
-        wrongSound.release()
     }
 }
 

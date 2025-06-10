@@ -75,7 +75,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:text="Poziom 1"
+                    android:text="Samochody"
                     android:textColor="#000"
                     android:textSize="36sp"
                     android:textStyle="bold" />
@@ -97,7 +97,7 @@
                     android:layout_below="@id/kat1Title"
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="8dp"
-                    android:text="Loga: 0/20"
+                    android:text="Loga: 0/15"
                     android:textColor="#000"
                     android:textSize="26sp" />
             </RelativeLayout>
@@ -120,7 +120,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:text="Poziom 2"
+                    android:text="Napoje"
                     android:textColor="#000"
                     android:textSize="36sp"
                     android:textStyle="bold" />
@@ -142,7 +142,7 @@
                     android:layout_below="@id/kat2Title"
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="8dp"
-                    android:text="Loga: 0/20"
+                    android:text="Loga: 0/15"
                     android:textColor="#000"
                     android:textSize="26sp" />
             </RelativeLayout>
@@ -170,7 +170,7 @@
                         android:id="@+id/kat_lockTitle2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Poziom 2"
+                        android:text="Napoje"
                         android:textColor="#FFF"
                         android:textSize="28sp"
                         android:textStyle="bold"
@@ -215,7 +215,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:text="Poziom 3"
+                    android:text="Gry"
                     android:textColor="#000"
                     android:textSize="36sp"
                     android:textStyle="bold" />
@@ -237,7 +237,7 @@
                     android:layout_below="@id/kat3Title"
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="8dp"
-                    android:text="Loga: 0/20"
+                    android:text="Loga: 0/15"
                     android:textColor="#000"
                     android:textSize="26sp" />
             </RelativeLayout>
@@ -265,7 +265,7 @@
                         android:id="@+id/kat_lockTitle3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Poziom 3"
+                        android:text="Gry"
                         android:textColor="#FFF"
                         android:textSize="28sp"
                         android:textStyle="bold"

@@ -39,6 +39,7 @@
         <activity android:name=".LvlActivity" />
         <activity android:name=".SummaryActivity" />
         <activity android:name=".StatisticsActivity" />
+        <activity android:name=".SummaryActivityCat" />
         <activity android:name=".AchievementsActivity" />
 
 

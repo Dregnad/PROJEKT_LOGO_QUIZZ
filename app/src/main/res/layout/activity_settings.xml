@@ -112,7 +112,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="(Wszystkie logotypy użyte czy zaprezentowane w tej grze są objęte prawami autorskimi i / lub znakami towarowymi odpowiednich podmiotów)"
-            android:textSize="6sp"
+            android:textSize="8sp"
             android:layout_marginTop="8dp"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"

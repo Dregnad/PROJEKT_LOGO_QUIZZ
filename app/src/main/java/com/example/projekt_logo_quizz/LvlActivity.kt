@@ -413,6 +413,9 @@ class LvlActivity : AppCompatActivity() {
         val userAnswer = answerSlots.joinToString("") { it.text.toString() }
 
         if (!userAnswer.contains("_")) {
+
+            letterButtons.forEach { it.isEnabled = false }
+
             if (userAnswer.equals(correctAnswer, ignoreCase = true)) {
                 Toast.makeText(this, "Brawo! Dobra odpowiedź!", Toast.LENGTH_SHORT).show()
                 musicService?.playDobrySound()
@@ -440,9 +443,7 @@ class LvlActivity : AppCompatActivity() {
                 Toast.makeText(this, "Błędna odpowiedź! Spróbuj ponownie!", Toast.LENGTH_SHORT).show()
                 musicService?.playZlySound()
 
-                answerContainer.postDelayed({
-                    resetNonHintSlots() // Zresetuj tylko sloty nieujawnione
-                }, 1000)
+                resetGame()
             }
         }
     }
@@ -469,8 +470,8 @@ class LvlActivity : AppCompatActivity() {
 
     private fun resetGame() {
         setupGame(correctAnswer)
+        letterButtons.forEach { it.isEnabled = true }
     }
-
     private fun updatePointsDisplay() {
         if (showingHints) {
             findViewById<ImageButton>(R.id.buttonArrow).setImageResource(R.drawable.wskazowka_ico)
@@ -554,15 +555,14 @@ class LvlActivity : AppCompatActivity() {
         letterButtons.clear()
         answerSlots.clear()
 
-        hintRevealedSlots = MutableList(correctAnswer.length) { false } // Inicjalizacja
-
         val dp = resources.displayMetrics.density
         val tileSize = (40 * dp).toInt()
         val marginSize = (4 * dp).toInt()
 
+        // Tworzenie slotów odpowiedzi z rozróżnieniem spacji i liter
         for (i in correctAnswer.indices) {
             val textView = TextView(this).apply {
-                text = "_"
+                text = if (correctAnswer[i] == ' ') " " else "_"  // Spacja dla spacji, "_" dla liter
                 textSize = 24f
                 setTextColor(Color.WHITE)
                 background = ContextCompat.getDrawable(this@LvlActivity, R.drawable.kafelek_zga)
@@ -570,24 +570,15 @@ class LvlActivity : AppCompatActivity() {
                 layoutParams = FlexboxLayout.LayoutParams(tileSize, tileSize).apply {
                     setMargins(marginSize, marginSize, marginSize, marginSize)
                 }
-                setOnClickListener {
-                    val index = answerSlots.indexOf(this)
-                    if (!hintRevealedSlots[index] && text != "_") {
-                        val letter = text.toString()
-                        text = "_"
-                        val button = letterButtons.find { it.text == letter && it.visibility == View.INVISIBLE }
-                        button?.visibility = View.VISIBLE
-                        musicService?.playClickSound() // Odtwórz dźwięk przy odkliknięciu
-                    }
-                }
             }
             answerSlots.add(textView)
             answerContainer.addView(textView)
         }
 
-        // Reszta kodu metody pozostaje bez zmian
-        val extraLettersCount = minOf(6, 12 - correctAnswer.length)
-        val shuffledLetters = (correctAnswer.toList() + generateRandomLetters(extraLettersCount)).shuffled()
+        // Generowanie przycisków liter bez spacji
+        val lettersInAnswer = correctAnswer.filter { it != ' ' }.toList()  // Tylko litery
+        val extraLettersCount = maxOf(0, minOf(6, 20 - correctAnswer.length))
+        val shuffledLetters = (lettersInAnswer + generateRandomLetters(extraLettersCount)).shuffled()
 
         shuffledLetters.forEachIndexed { index, letter ->
             val button = Button(this).apply {
@@ -610,11 +601,17 @@ class LvlActivity : AppCompatActivity() {
     }
 
     private fun onLetterClicked(button: Button) {
+        val hasEmptySlot = answerSlots.any { it.text.toString() == "_" }
+        if (!hasEmptySlot) {
+            Log.d("LvlActivity", "Brak pustych slotów, ignoruję kliknięcie litery")
+            return
+        }
+
         val letter = button.text[0]
         button.visibility = View.INVISIBLE
 
         for (textView in answerSlots) {
-            if (textView.text.toString().isBlank() || textView.text.toString() == "_") {
+            if (textView.text.toString() == "_") {
                 textView.text = letter.toString()
                 break
             }
