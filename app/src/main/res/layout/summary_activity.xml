@@ -1,0 +1,42 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/tlo_ukonczony_poz">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Poziom "
+        android:textSize="54sp"
+        android:textStyle="bold|italic"
+        android:textColor="#000000"  />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ukończony !"
+        android:textStyle="bold|italic"
+        android:textSize="54sp"
+        android:textColor="#000000"  />
+
+    <ImageButton
+        android:id="@+id/btnBackToMenu"
+        android:layout_width="300dp"
+        android:layout_height="80dp"
+        android:src="@drawable/powrotdomenu"
+        android:background="@null"
+        android:scaleType="fitCenter"
+        android:layout_marginTop="16dp" />
+
+
+
+    <ImageButton
+        android:id="@+id/btnNextLevel"
+        android:layout_width="300dp"
+        android:layout_height="80dp"
+        android:src="@drawable/nastepny_poziom"
+        android:background="@null"
+        android:scaleType="fitCenter"
+        android:layout_marginTop="16dp" />
+</LinearLayout>

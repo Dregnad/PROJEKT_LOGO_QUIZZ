@@ -1,0 +1,964 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/lvl_tlo">
+
+    <RelativeLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="0dp"
+        android:background="@android:color/transparent">
+
+        <ImageButton
+            android:id="@+id/btnBack1"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_alignParentStart="true"
+            android:background="@null"
+            android:contentDescription="Powrót"
+            android:src="@drawable/poziomy_szczalka"
+            android:scaleType="fitCenter" />
+
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Poziomy"
+            android:textColor="#000"
+            android:textSize="30sp"
+            android:layout_centerInParent="true" />
+
+        <LinearLayout
+            android:id="@+id/topRightLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <include layout="@layout/top_bar_points" />
+
+        </LinearLayout>
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/topBar"
+        android:padding="0dp">
+
+        <LinearLayout
+            android:id="@+id/levelsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <!-- Poziom 1 -->
+            <RelativeLayout
+                android:id="@+id/level1"
+                android:layout_width="match_parent"
+                android:layout_height="145dp"
+                android:layout_marginTop="80dp"
+                android:layout_marginBottom="60dp"
+                android:background="@drawable/poziom1"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="16dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true">
+
+                <TextView
+                    android:id="@+id/poziom1Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="Poziom 1"
+                    android:textColor="#000"
+                    android:textSize="36sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/poziom1Punkty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/poziom1Title"
+                    android:layout_marginTop="8dp"
+                    android:text="Punkty: 0"
+                    android:textColor="#000"
+                    android:textSize="26sp" />
+
+                <TextView
+                    android:id="@+id/poziom1Loga"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/poziom1Title"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="8dp"
+                    android:text="Loga: 0/20"
+                    android:textColor="#000"
+                    android:textSize="26sp" />
+            </RelativeLayout>
+
+            <!-- Poziom 2 -->
+            <RelativeLayout
+                android:id="@+id/level2"
+                android:layout_width="match_parent"
+                android:layout_height="145dp"
+                android:layout_marginTop="-20dp"
+                android:layout_marginBottom="60dp"
+                android:background="@drawable/poziom1"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/poziom2Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="Poziom 2"
+                    android:textColor="#000"
+                    android:textSize="36sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/poziom2Punkty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/poziom2Title"
+                    android:layout_marginTop="8dp"
+                    android:text="Punkty: 0"
+                    android:textColor="#000"
+                    android:textSize="26sp" />
+
+                <TextView
+                    android:id="@+id/poziom2Loga"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/poziom2Title"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="8dp"
+                    android:text="Loga: 0/20"
+                    android:textColor="#000"
+                    android:textSize="26sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/lockLayer2"
+                android:layout_width="match_parent"
+                android:background="#AA000000"
+                android:layout_height="145dp"
+                android:layout_marginTop="-20dp"
+                android:layout_marginBottom="60dp"
+                android:visibility="visible"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/lockTitle2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Poziom 2"
+                        android:textColor="#FFF"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/lockDesc2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Uzyskaj jeszcze 40 punktów, aby odblokować."
+                        android:textColor="#FFF"
+                        android:textSize="18sp"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp" />
+
+                    <ImageView
+                        android:id="@+id/lockIcon2"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/klodka" />
+                </LinearLayout>
+            </RelativeLayout>
+
+
+            <!-- Poziom 3 -->
+            <RelativeLayout
+                android:id="@+id/level3"
+                android:layout_width="match_parent"
+                android:layout_height="145dp"
+                android:layout_marginTop="-20dp"
+                android:layout_marginBottom="60dp"
+                android:background="@drawable/poziom1"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/poziom3Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="Poziom 3"
+                    android:textColor="#000"
+                    android:textSize="36sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/poziom3Punkty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/poziom3Title"
+                    android:layout_marginTop="8dp"
+                    android:text="Punkty: 0"
+                    android:textColor="#000"
+                    android:textSize="26sp" />
+
+                <TextView
+                    android:id="@+id/poziom3Loga"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/poziom3Title"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="8dp"
+                    android:text="Loga: 0/20"
+                    android:textColor="#000"
+                    android:textSize="26sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/lockLayer3"
+                android:layout_width="match_parent"
+                android:layout_height="145dp"
+                android:layout_marginTop="-20dp"
+                android:layout_marginBottom="60dp"
+                android:background="#AA000000"
+                android:visibility="visible"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/lockTitle3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Poziom 3"
+                        android:textColor="#FFF"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/lockDesc3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Uzyskaj jeszcze 40 punktów, aby odblokować."
+                        android:textColor="#FFF"
+                        android:textSize="18sp"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp" />
+
+                    <ImageView
+                        android:id="@+id/lockIcon3"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/klodka" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- Poziom 4 -->
+            <RelativeLayout
+                android:id="@+id/level4"
+                android:layout_width="match_parent"
+                android:layout_height="145dp"
+                android:layout_marginTop="-20dp"
+                android:layout_marginBottom="60dp"
+                android:background="@drawable/poziom1"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/poziom4Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="Poziom 4"
+                    android:textColor="#000"
+                    android:textSize="36sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/poziom4Punkty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/poziom4Title"
+                    android:layout_marginTop="8dp"
+                    android:text="Punkty: 0"
+                    android:textColor="#000"
+                    android:textSize="26sp" />
+
+                <TextView
+                    android:id="@+id/poziom4Loga"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/poziom4Title"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="8dp"
+                    android:text="Loga: 0/20"
+                    android:textColor="#000"
+                    android:textSize="26sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/lockLayer4"
+                android:layout_width="match_parent"
+                android:layout_height="145dp"
+                android:layout_marginTop="-20dp"
+                android:layout_marginBottom="60dp"
+                android:background="#AA000000"
+                android:visibility="visible"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/lockTitle4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Poziom 4"
+                        android:textColor="#FFF"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/lockDesc4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Uzyskaj jeszcze 40 punktów, aby odblokować."
+                        android:textColor="#FFF"
+                        android:textSize="18sp"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp" />
+
+                    <ImageView
+                        android:id="@+id/lockIcon4"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/klodka" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- Poziom 5 -->
+            <RelativeLayout
+                android:id="@+id/level5"
+                android:layout_width="match_parent"
+                android:layout_height="145dp"
+                android:layout_marginTop="-20dp"
+                android:layout_marginBottom="60dp"
+                android:background="@drawable/poziom1"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/poziom5Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="Poziom 5"
+                    android:textColor="#000"
+                    android:textSize="36sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/poziom5Punkty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/poziom5Title"
+                    android:layout_marginTop="8dp"
+                    android:text="Punkty: 0"
+                    android:textColor="#000"
+                    android:textSize="26sp" />
+
+                <TextView
+                    android:id="@+id/poziom5Loga"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/poziom5Title"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="8dp"
+                    android:text="Loga: 0/20"
+                    android:textColor="#000"
+                    android:textSize="26sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/lockLayer5"
+                android:layout_width="match_parent"
+                android:background="#AA000000"
+                android:layout_height="145dp"
+                android:layout_marginTop="-20dp"
+                android:layout_marginBottom="60dp"
+                android:visibility="visible"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/lockTitle5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Poziom 5"
+                        android:textColor="#FFF"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/lockDesc5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Uzyskaj jeszcze 40 punktów, aby odblokować."
+                        android:textColor="#FFF"
+                        android:textSize="18sp"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp" />
+
+                    <ImageView
+                        android:id="@+id/lockIcon5"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/klodka" />
+                </LinearLayout>
+            </RelativeLayout>
+
+
+            <!-- Poziom 6 -->
+            <RelativeLayout
+                android:id="@+id/level6"
+                android:layout_width="match_parent"
+                android:layout_height="145dp"
+                android:layout_marginTop="-20dp"
+                android:layout_marginBottom="60dp"
+                android:background="@drawable/poziom1"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/poziom6Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="Poziom 6"
+                    android:textColor="#000"
+                    android:textSize="36sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/poziom6Punkty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/poziom6Title"
+                    android:layout_marginTop="8dp"
+                    android:text="Punkty: 0"
+                    android:textColor="#000"
+                    android:textSize="26sp" />
+
+                <TextView
+                    android:id="@+id/poziom6Loga"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/poziom6Title"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="8dp"
+                    android:text="Loga: 0/20"
+                    android:textColor="#000"
+                    android:textSize="26sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/lockLayer6"
+                android:layout_width="match_parent"
+                android:layout_height="145dp"
+                android:layout_marginTop="-20dp"
+                android:layout_marginBottom="60dp"
+                android:background="#AA000000"
+                android:visibility="visible"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/lockTitle6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Poziom 6"
+                        android:textColor="#FFF"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/lockDesc6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Uzyskaj jeszcze 40 punktów, aby odblokować."
+                        android:textColor="#FFF"
+                        android:textSize="18sp"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp" />
+
+                    <ImageView
+                        android:id="@+id/lockIcon6"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/klodka" />
+                </LinearLayout>
+            </RelativeLayout>
+
+
+
+            <!-- Poziom 7 -->
+            <RelativeLayout
+                android:id="@+id/level7"
+                android:layout_width="match_parent"
+                android:layout_height="145dp"
+                android:layout_marginTop="-20dp"
+                android:layout_marginBottom="60dp"
+                android:background="@drawable/poziom1"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/poziom7Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="Poziom 7"
+                    android:textColor="#000"
+                    android:textSize="36sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/poziom7Punkty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/poziom7Title"
+                    android:layout_marginTop="8dp"
+                    android:text="Punkty: 0"
+                    android:textColor="#000"
+                    android:textSize="26sp" />
+
+                <TextView
+                    android:id="@+id/poziom7Loga"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/poziom7Title"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="8dp"
+                    android:text="Loga: 0/20"
+                    android:textColor="#000"
+                    android:textSize="26sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/lockLayer7"
+                android:layout_width="match_parent"
+                android:layout_height="145dp"
+                android:layout_marginTop="-20dp"
+                android:layout_marginBottom="60dp"
+                android:background="#AA000000"
+                android:visibility="visible"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/lockTitle7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Poziom 7"
+                        android:textColor="#FFF"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/lockDesc7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Uzyskaj jeszcze 40 punktów, aby odblokować."
+                        android:textColor="#FFF"
+                        android:textSize="18sp"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp" />
+
+                    <ImageView
+                        android:id="@+id/lockIcon7"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/klodka" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- Poziom 8 -->
+            <RelativeLayout
+                android:id="@+id/level8"
+                android:layout_width="match_parent"
+                android:layout_height="145dp"
+                android:layout_marginTop="-20dp"
+                android:layout_marginBottom="60dp"
+                android:background="@drawable/poziom1"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/poziom8Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="Poziom 8"
+                    android:textColor="#000"
+                    android:textSize="36sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/poziom8Punkty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/poziom8Title"
+                    android:layout_marginTop="8dp"
+                    android:text="Punkty: 0"
+                    android:textColor="#000"
+                    android:textSize="26sp" />
+
+                <TextView
+                    android:id="@+id/poziom8Loga"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/poziom8Title"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="8dp"
+                    android:text="Loga: 0/20"
+                    android:textColor="#000"
+                    android:textSize="26sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/lockLayer8"
+                android:layout_width="match_parent"
+                android:layout_height="145dp"
+                android:layout_marginTop="-20dp"
+                android:layout_marginBottom="60dp"
+                android:background="#AA000000"
+                android:visibility="visible"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/lockTitle8"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Poziom 8"
+                        android:textColor="#FFF"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/lockDesc8"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Uzyskaj jeszcze 40 punktów, aby odblokować."
+                        android:textColor="#FFF"
+                        android:textSize="18sp"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp" />
+
+                    <ImageView
+                        android:id="@+id/lockIcon8"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/klodka" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- Poziom 9 -->
+            <RelativeLayout
+                android:id="@+id/level9"
+                android:layout_width="match_parent"
+                android:layout_height="145dp"
+                android:layout_marginTop="-20dp"
+                android:layout_marginBottom="60dp"
+                android:background="@drawable/poziom1"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/poziom9Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="Poziom 9"
+                    android:textColor="#000"
+                    android:textSize="36sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/poziom9Punkty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/poziom9Title"
+                    android:layout_marginTop="8dp"
+                    android:text="Punkty: 0"
+                    android:textColor="#000"
+                    android:textSize="26sp" />
+
+                <TextView
+                    android:id="@+id/poziom9Loga"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/poziom9Title"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="8dp"
+                    android:text="Loga: 0/20"
+                    android:textColor="#000"
+                    android:textSize="26sp" />
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/lockLayer9"
+                android:layout_width="match_parent"
+                android:layout_height="145dp"
+                android:layout_marginTop="-20dp"
+                android:layout_marginBottom="60dp"
+                android:background="#AA000000"
+                android:visibility="visible"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/lockTitle9"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Poziom 9"
+                        android:textColor="#FFF"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/lockDesc9"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Uzyskaj jeszcze 40 punktów, aby odblokować."
+                        android:textColor="#FFF"
+                        android:textSize="18sp"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp" />
+
+                    <ImageView
+                        android:id="@+id/lockIcon9"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/klodka" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- Poziom 10 -->
+            <RelativeLayout
+                android:id="@+id/level10"
+                android:layout_width="match_parent"
+                android:layout_height="145dp"
+                android:layout_marginTop="-20dp"
+                android:layout_marginBottom="60dp"
+                android:background="@drawable/poziom1"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/poziom10Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="Poziom 10"
+                    android:textColor="#000"
+                    android:textSize="36sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/poziom10Punkty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/poziom10Title"
+                    android:layout_marginTop="8dp"
+                    android:text="Punkty: 0"
+                    android:textColor="#000"
+                    android:textSize="26sp" />
+
+                <TextView
+                    android:id="@+id/poziom10Loga"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/poziom10Title"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="8dp"
+                    android:text="Loga: 0/20"
+                    android:textColor="#000"
+                    android:textSize="26sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/lockLayer10"
+                android:layout_width="match_parent"
+                android:layout_height="145dp"
+                android:layout_marginTop="-20dp"
+                android:layout_marginBottom="60dp"
+                android:background="#AA000000"
+                android:visibility="visible"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/lockTitle10"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Poziom 10"
+                        android:textColor="#FFF"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/lockDesc10"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Uzyskaj jeszcze 40 punktów, aby odblokować."
+                        android:textColor="#FFF"
+                        android:textSize="18sp"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp" />
+
+                    <ImageView
+                        android:id="@+id/lockIcon10"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/klodka" />
+                </LinearLayout>
+            </RelativeLayout>
+
+
+
+
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

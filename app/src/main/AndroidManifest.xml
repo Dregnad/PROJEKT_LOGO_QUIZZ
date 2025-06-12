@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:usesCleartextTraffic="true"
+
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.PROJEKT_LOGO_QUIZZ"
+        tools:targetApi="31">
+
+
+        <activity
+            android:name=".SplashActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".SettingsActivity"/>
+        <activity android:name=".MenuActivity"/>
+        <!-- <activity android:name=".MenuActivity"/> -->
+        <activity android:name=".CategoryActivity"/>
+        <activity android:name=".KategorieActivity"/>
+        <activity android:name=".KatActivity"/>
+        <activity android:name=".MainActivity" />
+        <activity android:name=".ResultActivity" />
+        <activity android:name=".LvlActivity" />
+        <activity android:name=".SummaryActivity" />
+        <activity android:name=".StatisticsActivity" />
+        <activity android:name=".SummaryActivityCat" />
+        <activity android:name=".AchievementsActivity" />
+
+
+
+        <service
+            android:name=".MusicService"
+            android:enabled="true"
+            android:exported="false"/>
+
+    </application>
+
+</manifest>
